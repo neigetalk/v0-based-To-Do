@@ -10,7 +10,6 @@ import {
   Image as ImageIcon,
   CheckCircle2,
   Clock3,
-  Circle,
   MessageSquare,
   RotateCcw,
   Trash2,
@@ -58,6 +57,9 @@ interface BoardViewProps {
 
 const STATUSES: TaskStatus[] = ['To Do', 'In Progress', 'Review', 'Done']
 
+// Tasks in this category are calendar-only — hidden from the Kanban board.
+const BOARD_EXCLUDED_CATEGORY = '기본'
+
 function getDueDateTone(dueDate: Date, now: Date) {
   if (isBefore(dueDate, now)) return 'overdue'
   const hours = differenceInHours(dueDate, now)
@@ -95,7 +97,7 @@ function renderStatusIcon(status: TaskStatus) {
     case 'Done':
       return <CheckCircle2 {...commonProps} className="inline-block text-gray-900" />
     default:
-      return <Circle {...commonProps} className="inline-block text-gray-400" />
+      return null
   }
 }
 
@@ -119,8 +121,9 @@ export function BoardView({
   const [dragOverStatus, setDragOverStatus] = useState<TaskStatus | null>(null)
 
   const filteredTasks = useMemo(() => {
-    if (!categoryFilter || categoryFilter === 'All') return tasks
-    return tasks.filter((t) => t.category === categoryFilter)
+    const boardTasks = tasks.filter((t) => t.category !== BOARD_EXCLUDED_CATEGORY)
+    if (!categoryFilter || categoryFilter === 'All') return boardTasks
+    return boardTasks.filter((t) => t.category === categoryFilter)
   }, [tasks, categoryFilter])
 
   const nowMs = now.getTime()
@@ -176,7 +179,7 @@ export function BoardView({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">{t.boardAllCategories}</SelectItem>
-                {categories.map((c) => (
+                {categories.filter((c) => c !== BOARD_EXCLUDED_CATEGORY).map((c) => (
                   <SelectItem key={c} value={c}>
                     {c}
                   </SelectItem>

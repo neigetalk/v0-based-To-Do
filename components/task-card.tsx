@@ -11,7 +11,6 @@ import {
   Image as ImageIcon,
   Clock3,
   RotateCcw,
-  Circle,
   MessageSquare,
   Trash2,
 } from 'lucide-react'
@@ -74,7 +73,7 @@ export function TaskCard({
       case 'Done':
         return <CheckCircle2 {...commonProps} className="inline-block text-gray-900" aria-label="Done" />
       default:
-        return <Circle {...commonProps} className="inline-block text-gray-400" aria-label="To Do" />
+        return null
     }
   }
 

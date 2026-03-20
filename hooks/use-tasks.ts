@@ -17,6 +17,9 @@ export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [categoryList, setCategoryList] = useState<string[]>([])
+
+  // '기본' is always pinned as the first category (calendar-only, hidden from board).
+  const DEFAULT_CATEGORY = '기본'
   const seeded = useRef(false)
   const catSeeded = useRef(false)
 
@@ -48,7 +51,7 @@ export function useTasks() {
         if (cats.length === 0 && !catSeeded.current) {
           catSeeded.current = true
           const seedCats = Array.from(
-            new Set(mockTasks.map((t) => t.category).filter(Boolean))
+            new Set([DEFAULT_CATEGORY, ...mockTasks.map((t) => t.category).filter(Boolean)])
           )
           await saveCategories(seedCats)
           return
@@ -248,10 +251,14 @@ export function useTasks() {
     [categoryList, tasks]
   )
 
+  const categories = categoryList.includes(DEFAULT_CATEGORY)
+    ? categoryList
+    : [DEFAULT_CATEGORY, ...categoryList]
+
   return {
     tasks,
     loading,
-    categories: categoryList,
+    categories,
     handleToggleComplete,
     handleUpdateTask,
     handleChangePriority,
