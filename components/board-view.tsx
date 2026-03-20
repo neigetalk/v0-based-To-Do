@@ -165,13 +165,8 @@ export function BoardView({
     hasMounted ? (
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
       <div className="flex flex-col bg-white/50 rounded-2xl p-6 shadow-sm backdrop-blur-sm min-h-[520px]">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">{t.boardTitle}</h2>
-            <p className="text-sm text-gray-500 mt-1">
-              {t.boardSubtitle}
-            </p>
-          </div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+          <p className="text-sm text-gray-500">{t.boardSubtitle}</p>
 
           <div className="w-full sm:w-[260px]">
             <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>

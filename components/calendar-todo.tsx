@@ -2,13 +2,14 @@
 
 import { useState, useMemo } from 'react'
 import { isSameDay } from 'date-fns'
-import { Plus, Settings2 } from 'lucide-react'
+import { Archive, Plus, Settings2, Trash2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { MonthlyCalendar } from './monthly-calendar'
 import { TaskList } from './task-list'
 import { AddTaskDialog } from './add-task-dialog'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { cn } from '@/lib/utils'
 import { BoardView } from '@/components/board-view'
 import { TaskDetailDialog } from '@/components/task-detail-dialog'
 import { ManageCategoriesDialog } from '@/components/manage-categories-dialog'
@@ -139,29 +140,42 @@ export function CalendarTodo() {
             </div>
           </div>
 
-          <div className="mt-4">
-            <Tabs
-              value={taskScope}
-              onValueChange={(v) => {
-                if (v === 'archived' || v === 'trash' || v === 'active') {
-                  setTaskScope(v)
-                } else {
-                  setTaskScope('active')
-                }
-              }}
-              className="w-full"
+          {/* Archive + Trash scope toggles — icon buttons, left-aligned */}
+          <div className="mt-3 flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setTaskScope(taskScope === 'archived' ? 'active' : 'archived')}
+              title={t.scopeArchived}
+              aria-label={t.scopeArchived}
+              className={cn(
+                'inline-flex items-center justify-center size-8 rounded-lg transition-colors',
+                taskScope === 'archived'
+                  ? 'text-[#4CD964] bg-[#4CD964]/10'
+                  : 'text-[#8E8E93] hover:text-gray-700 hover:bg-white/60'
+              )}
             >
-              <TabsList className="w-full">
-                <TabsTrigger value="active" className="flex-1">{t.scopeActive}</TabsTrigger>
-                <TabsTrigger value="archived" className="flex-1">{t.scopeArchived}</TabsTrigger>
-                <TabsTrigger value="trash" className="flex-1">{t.scopeTrash}</TabsTrigger>
-              </TabsList>
-            </Tabs>
+              <Archive className="size-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setTaskScope(taskScope === 'trash' ? 'active' : 'trash')}
+              title={t.scopeTrash}
+              aria-label={t.scopeTrash}
+              className={cn(
+                'inline-flex items-center justify-center size-8 rounded-lg transition-colors',
+                taskScope === 'trash'
+                  ? 'text-[#4CD964] bg-[#4CD964]/10'
+                  : 'text-[#8E8E93] hover:text-gray-700 hover:bg-white/60'
+              )}
+            >
+              <Trash2 className="size-4" />
+            </button>
 
             {taskScope === 'trash' && (
-              <p className="mt-2 text-xs text-gray-400 text-center">
+              <span className="ml-1 text-xs text-gray-400">
                 {t.trashAutoDeleteNotice}
-              </p>
+              </span>
             )}
           </div>
         </header>
