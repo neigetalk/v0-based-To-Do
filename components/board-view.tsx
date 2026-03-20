@@ -56,7 +56,7 @@ interface BoardViewProps {
   onCategoryFilterChange: (category: string) => void
 }
 
-const STATUSES: TaskStatus[] = ['To Do', 'In Progress', 'On Hold', 'Done']
+const STATUSES: TaskStatus[] = ['To Do', 'In Progress', 'Done', 'On Hold']
 
 // Tasks in this category are calendar-only — hidden from the Kanban board.
 const BOARD_EXCLUDED_CATEGORY = '기본'
