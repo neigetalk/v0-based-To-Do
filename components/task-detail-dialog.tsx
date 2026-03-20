@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { format, startOfDay } from 'date-fns'
-import { CalendarIcon, Image as ImageIcon, Settings2 } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { CalendarIcon, Settings2 } from 'lucide-react'
 import { Task, Priority, RepeatType } from '@/lib/types'
 import type { TaskStatus } from '@/lib/types'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
@@ -140,24 +141,6 @@ export function TaskDetailDialog({
     !hasMounted ? null : (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-4xl bg-white max-h-[90vh] overflow-y-auto overflow-x-auto">
-        {/* Hero image */}
-        {localImage ? (
-          <div className="rounded-2xl overflow-hidden border border-gray-200 bg-gray-50">
-            <img
-              src={localImage}
-              alt="Task attachment"
-              className="w-full max-h-[240px] object-cover"
-            />
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50/60 p-6 text-sm text-gray-500 flex items-center justify-center">
-            <span className="inline-flex items-center gap-2">
-              <ImageIcon className="size-4" />
-              {t.detailNoImage}
-            </span>
-          </div>
-        )}
-
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
           <div className="space-y-4">
             <div className="space-y-2">
@@ -173,6 +156,25 @@ export function TaskDetailDialog({
             </div>
 
             <RichTextEditor valueHtml={localNotes} onChangeHtml={setLocalNotes} />
+
+            {/* Image preview — only shown when an image is actually attached */}
+            <AnimatePresence>
+              {localImage && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-50"
+                >
+                  <img
+                    src={localImage}
+                    alt="Task attachment"
+                    className="w-full max-h-[200px] object-cover"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="space-y-5">
