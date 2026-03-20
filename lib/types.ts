@@ -1,6 +1,6 @@
 export type Priority = 'low' | 'medium' | 'high'
 
-export type TaskStatus = 'To Do' | 'In Progress' | 'Review' | 'Done'
+export type TaskStatus = 'To Do' | 'In Progress' | 'Review' | 'Done' | 'General'
 
 export interface Task {
   id: string

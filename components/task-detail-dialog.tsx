@@ -270,6 +270,7 @@ export function TaskDetailDialog({
                       <SelectValue placeholder={t.fieldStatusPlaceholder} />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="General">{t.statusGeneral}</SelectItem>
                       <SelectItem value="To Do">{t.statusToDo}</SelectItem>
                       <SelectItem value="In Progress">{t.statusInProgress}</SelectItem>
                       <SelectItem value="Review">{t.statusReview}</SelectItem>
@@ -278,7 +279,8 @@ export function TaskDetailDialog({
                   </Select>
 
                   <span className={cn('text-xs font-medium px-2 py-1 rounded-full shrink-0', statusTone)}>
-                    {localStatus === 'To Do' ? t.statusToDo
+                    {localStatus === 'General' ? t.statusGeneral
+                      : localStatus === 'To Do' ? t.statusToDo
                       : localStatus === 'In Progress' ? t.statusInProgress
                       : localStatus === 'Review' ? t.statusReview
                       : t.statusDone}

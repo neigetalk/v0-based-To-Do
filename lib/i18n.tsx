@@ -57,6 +57,7 @@ const dict = {
     statusInProgress: 'In Progress',
     statusReview: 'Review',
     statusDone: 'Done',
+    statusGeneral: 'General',
 
     // Board view
     boardTitle: 'Board',
@@ -160,6 +161,7 @@ const dict = {
     statusInProgress: '진행 중',
     statusReview: '검토 중',
     statusDone: '완료',
+    statusGeneral: '기본',
 
     boardTitle: '보드',
     boardSubtitle: '카드를 드래그하여 상태를 변경하세요',

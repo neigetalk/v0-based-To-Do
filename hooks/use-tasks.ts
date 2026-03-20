@@ -72,9 +72,18 @@ export function useTasks() {
     async (id: string) => {
       const task = tasks.find((t) => t.id === id)
       if (!task) return
+      const nextCompleted = !task.completed
+      // When checking off → Done. When unchecking → restore original status
+      // unless it was 'Done' (meaning it was already complete), in which case
+      // revert to 'To Do' so it re-enters the workflow.
+      const nextStatus: Task['status'] = nextCompleted
+        ? 'Done'
+        : task.status === 'Done'
+          ? 'To Do'
+          : task.status
       const patch = {
-        completed: !task.completed,
-        status: (!task.completed ? 'Done' : 'To Do') as Task['status'],
+        completed: nextCompleted,
+        status: nextStatus,
       }
       setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)))
       await patchTask(id, patch)

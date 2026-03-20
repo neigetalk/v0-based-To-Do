@@ -306,6 +306,7 @@ export function AddTaskDialog({
                   <SelectValue placeholder={t.fieldStatusPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="General">{t.statusGeneral}</SelectItem>
                   <SelectItem value="To Do">{t.statusToDo}</SelectItem>
                   <SelectItem value="In Progress">{t.statusInProgress}</SelectItem>
                   <SelectItem value="Review">{t.statusReview}</SelectItem>
