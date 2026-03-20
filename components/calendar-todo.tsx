@@ -88,20 +88,13 @@ export function CalendarTodo() {
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <motion.h1
-                initial={{ opacity: 0, x: -20 }}
+                key={viewMode}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="text-2xl md:text-3xl font-bold text-gray-900"
               >
-                {t.appTitle}
+                {viewMode === 'board' ? t.viewBoard : t.viewCalendar}
               </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-gray-600 mt-1"
-              >
-                {t.appSubtitle}
-              </motion.p>
             </div>
 
             <div className="flex items-center gap-3">

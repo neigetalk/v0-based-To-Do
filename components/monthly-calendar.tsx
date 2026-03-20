@@ -40,7 +40,7 @@ export function MonthlyCalendar({
   onDrop,
   isDragging,
 }: MonthlyCalendarProps) {
-  const { t } = useT()
+  const { t, lang } = useT()
   const days = useMemo(() => {
     const monthStart = startOfMonth(currentMonth)
     const monthEnd = endOfMonth(currentMonth)
@@ -63,14 +63,20 @@ export function MonthlyCalendar({
       className="flex flex-col h-full bg-white/50 rounded-2xl p-6 shadow-sm backdrop-blur-sm"
     >
       <div className="flex items-center justify-between mb-6">
-        <motion.h2
+        <motion.div
           key={currentMonth.toISOString()}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-xl font-semibold text-gray-900"
         >
-          {format(currentMonth, 'MMMM yyyy')}
-        </motion.h2>
+          <div className="text-xl font-semibold text-gray-900 leading-tight">
+            {lang === 'ko'
+              ? `${currentMonth.getMonth() + 1}월`
+              : format(currentMonth, 'MMMM')}
+          </div>
+          <div className="text-xs font-normal mt-0.5" style={{ color: '#8E8E93' }}>
+            {format(currentMonth, 'yyyy')}
+          </div>
+        </motion.div>
         <div className="flex gap-1">
           <Button
             variant="ghost"
