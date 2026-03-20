@@ -10,6 +10,7 @@ import {
   GripVertical,
   Image as ImageIcon,
   Clock3,
+  Repeat,
   RotateCcw,
   MessageSquare,
   Trash2,
@@ -124,6 +125,9 @@ export function TaskCard({
                   <Flag className="inline-block size-3.5 text-[#FF3B30] shrink-0" />
                 )}
                 <span className="truncate">{task.title}</span>
+                {task.isRecurring && (
+                  <Repeat className="inline-block size-3 text-[#4CD964] shrink-0" aria-label="Recurring" />
+                )}
 
                 <span
                   className="inline-flex items-center"

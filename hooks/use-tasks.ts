@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { startOfDay } from 'date-fns'
-import type { Task, Priority } from '@/lib/types'
+import { addDays, addMonths, addWeeks, addYears, startOfDay } from 'date-fns'
+import type { Task, Priority, RepeatType } from '@/lib/types'
 import { mockTasks } from '@/lib/mock-data'
 import {
   saveTask,
@@ -24,6 +24,60 @@ export function useTasks() {
   const seeded = useRef(false)
   const catSeeded = useRef(false)
   const purgeDone = useRef(false)
+
+  // ── Recurring task helpers ────────────────────────────────────────────
+
+  /** Advance a single date by one repeat interval. Handles end-of-month correctly via date-fns. */
+  const advanceByRepeat = (d: Date, repeatType: RepeatType, excludeWeekends: boolean): Date => {
+    switch (repeatType) {
+      case 'daily': {
+        let next = addDays(d, 1)
+        while (excludeWeekends && (next.getDay() === 0 || next.getDay() === 6)) {
+          next = addDays(next, 1)
+        }
+        return next
+      }
+      case 'weekly':  return addWeeks(d, 1)
+      case 'monthly': return addMonths(d, 1)
+      case 'yearly':  return addYears(d, 1)
+    }
+  }
+
+  /**
+   * Creates the next recurrence of a completed recurring task and saves it to
+   * Firestore. Should be called after the original task is marked Done.
+   */
+  const spawnNextRecurrence = useCallback(async (task: Task) => {
+    if (!task.isRecurring || !task.repeatType) return
+    const rt = task.repeatType
+    const skipWe = task.excludeWeekends ?? false
+
+    const nextDate  = startOfDay(advanceByRepeat(task.date, rt, skipWe))
+    const nextStart = advanceByRepeat(task.startDate, rt, skipWe)
+    const nextDue   = advanceByRepeat(task.dueDate, rt, skipWe)
+
+    const nextTask: Task = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      title: task.title,
+      category: task.category,
+      priority: task.priority,
+      status: 'To Do',
+      completed: false,
+      date: nextDate,
+      startDate: nextStart,
+      dueDate: nextDue,
+      notesHtml: task.notesHtml,
+      isRecurring: true,
+      repeatType: rt,
+      excludeWeekends: task.excludeWeekends,
+      originalTaskId: task.originalTaskId ?? task.id,
+      isArchived: false,
+      isDeleted: false,
+    }
+
+    setTasks((prev) => [...prev, nextTask])
+    await saveTask(nextTask)
+  }, []) // setTasks is stable from useState; task data is passed as parameter
 
   // ── Real-time task listener ───────────────────────────────────────────
   useEffect(() => {
@@ -84,28 +138,36 @@ export function useTasks() {
       const task = tasks.find((t) => t.id === id)
       if (!task) return
       const nextCompleted = !task.completed
-      // When checking off → Done. When unchecking → restore original status
-      // unless it was 'Done' (meaning it was already complete), in which case
-      // revert to 'To Do' so it re-enters the workflow.
       const nextStatus: Task['status'] = nextCompleted
         ? 'Done'
         : task.status === 'Done'
           ? 'To Do'
           : task.status
-      const patch = {
-        completed: nextCompleted,
-        status: nextStatus,
-      }
+      const patch = { completed: nextCompleted, status: nextStatus }
       setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)))
       await patchTask(id, patch)
+
+      // Spawn next occurrence when a recurring task is checked off.
+      if (nextCompleted && task.isRecurring) {
+        await spawnNextRecurrence(task)
+      }
     },
-    [tasks]
+    [tasks, spawnNextRecurrence]
   )
 
   const handleUpdateTask = useCallback(async (id: string, patch: Partial<Task>) => {
+    const prevTask = tasks.find((t) => t.id === id)
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)))
     await patchTask(id, patch)
-  }, [])
+
+    // Spawn next occurrence when a recurring task transitions to Done via the detail dialog.
+    const isNowDone = patch.completed === true
+    const wasNotDone = prevTask && !prevTask.completed
+    const recurring = patch.isRecurring ?? prevTask?.isRecurring
+    if (isNowDone && wasNotDone && recurring) {
+      await spawnNextRecurrence({ ...prevTask!, ...patch } as Task)
+    }
+  }, [tasks, spawnNextRecurrence])
 
   const handleChangePriority = useCallback(
     async (id: string, priority: Priority) => {
@@ -157,7 +219,10 @@ export function useTasks() {
       dueDate: Date,
       priority: Priority,
       category: string,
-      status: Task['status']
+      status: Task['status'],
+      isRecurring = false,
+      repeatType?: RepeatType,
+      excludeWeekends = false,
     ) => {
       const day = startOfDay(startDate)
       const nextStart = new Date(startDate)
@@ -178,6 +243,11 @@ export function useTasks() {
         completed,
         isArchived: false,
         isDeleted: false,
+        ...(isRecurring && repeatType ? {
+          isRecurring: true,
+          repeatType,
+          excludeWeekends: repeatType === 'daily' ? excludeWeekends : undefined,
+        } : {}),
       }
 
       setTasks((prev) => [...prev, newTask])
@@ -195,11 +265,16 @@ export function useTasks() {
 
   const handleMoveTaskToStatus = useCallback(
     async (id: string, status: Task['status']) => {
+      const task = tasks.find((t) => t.id === id)
       const patch = { status, completed: status === 'Done' }
       setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)))
       await patchTask(id, patch)
+
+      if (status === 'Done' && task?.isRecurring && !task.completed) {
+        await spawnNextRecurrence(task)
+      }
     },
-    []
+    [tasks, spawnNextRecurrence]
   )
 
   const handleDrop = useCallback(

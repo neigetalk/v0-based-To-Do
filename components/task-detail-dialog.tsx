@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { format, startOfDay } from 'date-fns'
 import { CalendarIcon, Image as ImageIcon, Settings2 } from 'lucide-react'
-import { Task, Priority } from '@/lib/types'
+import { Task, Priority, RepeatType } from '@/lib/types'
 import type { TaskStatus } from '@/lib/types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select'
 import { useHasMounted } from '@/hooks/use-has-mounted'
 import { useT } from '@/lib/i18n'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface TaskDetailDialogProps {
   open: boolean
@@ -78,6 +79,8 @@ export function TaskDetailDialog({
   const [localStatus, setLocalStatus] = useState<TaskStatus>('To Do')
   const [localPriority, setLocalPriority] = useState<Priority>('medium')
   const [newCategory, setNewCategory] = useState('')
+  const [localRepeatType, setLocalRepeatType] = useState<'none' | RepeatType>('none')
+  const [localExcludeWeekends, setLocalExcludeWeekends] = useState(false)
 
   useEffect(() => {
     if (!task) return
@@ -89,6 +92,8 @@ export function TaskDetailDialog({
     setLocalCategory(task.category)
     setLocalStatus(task.status)
     setLocalPriority(task.priority)
+    setLocalRepeatType(task.repeatType ?? 'none')
+    setLocalExcludeWeekends(task.excludeWeekends ?? false)
   }, [task])
 
   const statusTone = useMemo(() => {
@@ -110,6 +115,7 @@ export function TaskDetailDialog({
     const nextDue = localDue
     const nextDay = startOfDay(nextStart)
 
+    const isRecurring = localRepeatType !== 'none'
     onUpdateTask(task.id, {
       title: localTitle.trim() ? localTitle.trim() : task.title,
       notesHtml: localNotes,
@@ -121,6 +127,9 @@ export function TaskDetailDialog({
       status: localStatus,
       priority: localPriority,
       completed: localStatus === 'Done',
+      isRecurring,
+      repeatType: isRecurring ? (localRepeatType as RepeatType) : undefined,
+      excludeWeekends: isRecurring && localRepeatType === 'daily' ? localExcludeWeekends : undefined,
     })
     onOpenChange(false)
   }
@@ -286,6 +295,37 @@ export function TaskDetailDialog({
                       : t.statusDone}
                   </span>
                 </div>
+              </div>
+
+              {/* Repeat */}
+              <div className="space-y-2">
+                <Label className="text-gray-700">{t.repeatLabel}</Label>
+                <Select value={localRepeatType} onValueChange={(v) => {
+                  setLocalRepeatType(v as 'none' | RepeatType)
+                  if (v !== 'daily') setLocalExcludeWeekends(false)
+                }}>
+                  <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t.repeatNone}</SelectItem>
+                    <SelectItem value="daily">{t.repeatDaily}</SelectItem>
+                    <SelectItem value="weekly">{t.repeatWeekly}</SelectItem>
+                    <SelectItem value="monthly">{t.repeatMonthly}</SelectItem>
+                    <SelectItem value="yearly">{t.repeatYearly}</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {localRepeatType === 'daily' && (
+                  <label className="flex items-center gap-2 cursor-pointer text-xs text-gray-700 select-none">
+                    <Checkbox
+                      checked={localExcludeWeekends}
+                      onCheckedChange={(v) => setLocalExcludeWeekends(Boolean(v))}
+                      className="data-[state=checked]:bg-[#4CD964] data-[state=checked]:border-[#4CD964]"
+                    />
+                    {t.repeatExcludeWeekends}
+                  </label>
+                )}
               </div>
             </div>
 

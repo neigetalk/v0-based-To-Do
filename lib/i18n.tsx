@@ -120,6 +120,15 @@ const dict = {
 
     // Trash auto-delete notice
     trashAutoDeleteNotice: 'Items in the Trash will be permanently deleted after 7 days.',
+
+    // Recurring tasks
+    repeatLabel: 'Repeat',
+    repeatNone: 'None',
+    repeatDaily: 'Daily',
+    repeatWeekly: 'Weekly',
+    repeatMonthly: 'Monthly',
+    repeatYearly: 'Yearly',
+    repeatExcludeWeekends: 'Weekdays only (Mon–Fri)',
   },
 
   ko: {
@@ -220,6 +229,14 @@ const dict = {
     labelDue: '마감',
 
     trashAutoDeleteNotice: '휴지통에 있는 항목은 7일 후 자동으로 영구 삭제됩니다.',
+
+    repeatLabel: '반복',
+    repeatNone: '없음',
+    repeatDaily: '매일',
+    repeatWeekly: '매주',
+    repeatMonthly: '매월',
+    repeatYearly: '매년',
+    repeatExcludeWeekends: '주중만 (월–금)',
   },
 } as const
 

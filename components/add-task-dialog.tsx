@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { CalendarIcon, Settings2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Priority, TaskStatus } from '@/lib/types'
+import { Priority, TaskStatus, RepeatType } from '@/lib/types'
 import {
   Dialog,
   DialogContent,
@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface AddTaskDialogProps {
   open: boolean
@@ -40,7 +41,10 @@ interface AddTaskDialogProps {
     dueDate: Date,
     priority: Priority,
     category: string,
-    status: TaskStatus
+    status: TaskStatus,
+    isRecurring?: boolean,
+    repeatType?: RepeatType,
+    excludeWeekends?: boolean,
   ) => void
   defaultDate: Date
   categories: string[]
@@ -84,6 +88,8 @@ export function AddTaskDialog({
   const [category, setCategory] = useState<string>(categories[0] ?? '')
   const [status, setStatus] = useState<TaskStatus>('To Do')
   const [newCategory, setNewCategory] = useState('')
+  const [repeatType, setRepeatType] = useState<'none' | RepeatType>('none')
+  const [excludeWeekends, setExcludeWeekends] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -100,13 +106,21 @@ export function AddTaskDialog({
     setCategory(categories[0] ?? '')
     setStatus('To Do')
     setNewCategory('')
+    setRepeatType('none')
+    setExcludeWeekends(false)
   }, [open, defaultDate, categories])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (title.trim()) {
       const finalCategory = category || categories[0] || '기타'
-      onAddTask(title.trim(), localStart, localDue, priority, finalCategory, status)
+      const isRecurring = repeatType !== 'none'
+      onAddTask(
+        title.trim(), localStart, localDue, priority, finalCategory, status,
+        isRecurring,
+        isRecurring ? (repeatType as RepeatType) : undefined,
+        isRecurring && repeatType === 'daily' ? excludeWeekends : false,
+      )
       setTitle('')
       onOpenChange(false)
     }
@@ -313,6 +327,36 @@ export function AddTaskDialog({
                   <SelectItem value="Done">{t.statusDone}</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label className="text-gray-700">{t.repeatLabel}</Label>
+              <Select value={repeatType} onValueChange={(v) => {
+                setRepeatType(v as 'none' | RepeatType)
+                if (v !== 'daily') setExcludeWeekends(false)
+              }}>
+                <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t.repeatNone}</SelectItem>
+                  <SelectItem value="daily">{t.repeatDaily}</SelectItem>
+                  <SelectItem value="weekly">{t.repeatWeekly}</SelectItem>
+                  <SelectItem value="monthly">{t.repeatMonthly}</SelectItem>
+                  <SelectItem value="yearly">{t.repeatYearly}</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {repeatType === 'daily' && (
+                <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-700 select-none">
+                  <Checkbox
+                    checked={excludeWeekends}
+                    onCheckedChange={(v) => setExcludeWeekends(Boolean(v))}
+                    className="data-[state=checked]:bg-[#4CD964] data-[state=checked]:border-[#4CD964]"
+                  />
+                  {t.repeatExcludeWeekends}
+                </label>
+              )}
             </div>
           </div>
 

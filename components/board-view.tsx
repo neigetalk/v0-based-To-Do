@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Clock3,
   MessageSquare,
+  Repeat,
   RotateCcw,
   Trash2,
 } from 'lucide-react'
@@ -294,6 +295,9 @@ export function BoardView({
                                         <Flag className="inline-block size-3.5 text-[#FF3B30]" />
                                       )}
                                       <span className="truncate flex-1">{task.title}</span>
+                                      {task.isRecurring && (
+                                        <Repeat className="inline-block size-3 text-[#4CD964] shrink-0" aria-label="Recurring" />
+                                      )}
                                       <span
                                         className="inline-flex items-center"
                                         onClick={(e) => e.stopPropagation()}
