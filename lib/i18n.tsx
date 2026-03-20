@@ -117,6 +117,9 @@ const dict = {
     // Start time / due time display in card
     labelStart: 'Start',
     labelDue: 'Due',
+
+    // Trash auto-delete notice
+    trashAutoDeleteNotice: 'Items in the Trash will be permanently deleted after 7 days.',
   },
 
   ko: {
@@ -215,6 +218,8 @@ const dict = {
 
     labelStart: '시작',
     labelDue: '마감',
+
+    trashAutoDeleteNotice: '휴지통에 있는 항목은 7일 후 자동으로 영구 삭제됩니다.',
   },
 } as const
 

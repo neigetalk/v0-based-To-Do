@@ -16,4 +16,6 @@ export interface Task {
   imageDataUrl?: string
   isArchived?: boolean
   isDeleted?: boolean
+  /** ISO string set once when the task is first moved to Trash. Used for auto-purge after 7 days. */
+  deletedAt?: string
 }

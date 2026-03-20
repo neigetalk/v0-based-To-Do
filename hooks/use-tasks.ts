@@ -8,6 +8,7 @@ import {
   saveTask,
   patchTask,
   deleteTask,
+  purgeExpiredTrashTasks,
   subscribeToTasks,
   subscribeToCategories,
   saveCategories,
@@ -22,6 +23,7 @@ export function useTasks() {
   const DEFAULT_CATEGORY = '기본'
   const seeded = useRef(false)
   const catSeeded = useRef(false)
+  const purgeDone = useRef(false)
 
   // ── Real-time task listener ───────────────────────────────────────────
   useEffect(() => {
@@ -43,6 +45,15 @@ export function useTasks() {
     )
     return unsub
   }, [])
+
+  // ── One-time trash auto-purge (runs once after tasks first load) ──────
+  useEffect(() => {
+    if (purgeDone.current || loading) return
+    purgeDone.current = true
+    purgeExpiredTrashTasks().catch((err) =>
+      console.error('[useTasks] Trash purge error:', err)
+    )
+  }, [loading])
 
   // ── Real-time categories listener ─────────────────────────────────────
   useEffect(() => {
@@ -112,11 +123,21 @@ export function useTasks() {
     await patchTask(id, patch)
   }, [])
 
-  const handleDelete = useCallback(async (id: string) => {
-    const patch = { isDeleted: true, isArchived: false }
-    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)))
-    await patchTask(id, patch)
-  }, [])
+  const handleDelete = useCallback(
+    async (id: string) => {
+      const task = tasks.find((t) => t.id === id)
+      if (!task) return
+      // Only set deletedAt the first time a task is moved to Trash.
+      const patch: Partial<Task> = {
+        isDeleted: true,
+        isArchived: false,
+        ...(!task.deletedAt ? { deletedAt: new Date().toISOString() } : {}),
+      }
+      setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)))
+      await patchTask(id, patch)
+    },
+    [tasks]
+  )
 
   const handleRestore = useCallback(async (id: string) => {
     const patch = { isArchived: false, isDeleted: false }

@@ -164,6 +164,12 @@ export function CalendarTodo() {
                 <TabsTrigger value="trash" className="flex-1">{t.scopeTrash}</TabsTrigger>
               </TabsList>
             </Tabs>
+
+            {taskScope === 'trash' && (
+              <p className="mt-2 text-xs text-gray-400 text-center">
+                {t.trashAutoDeleteNotice}
+              </p>
+            )}
           </div>
         </header>
 

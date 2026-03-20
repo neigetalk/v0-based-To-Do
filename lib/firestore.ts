@@ -11,6 +11,7 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
+  getDocs,
   onSnapshot,
   query,
   orderBy,
@@ -108,6 +109,31 @@ export function subscribeToCategories(
 /** Overwrite the managed category list. */
 export async function saveCategories(list: string[]): Promise<void> {
   await setDoc(META_CATEGORIES_REF(), { list })
+}
+
+// ─── Trash auto-purge ────────────────────────────────────────────────────────
+
+const TRASH_TTL_MS = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+
+/**
+ * Permanently deletes any trashed tasks whose `deletedAt` timestamp is older
+ * than 7 days. Should be called once per app load (client-side cleanup).
+ *
+ * Tasks without a `deletedAt` field (trashed before this feature) are left
+ * untouched so no data is lost unexpectedly.
+ */
+export async function purgeExpiredTrashTasks(): Promise<number> {
+  const snap = await getDocs(tasksRef())
+  const cutoff = Date.now() - TRASH_TTL_MS
+
+  const expired = snap.docs.filter((d) => {
+    const data = d.data()
+    if (!data.isDeleted || !data.deletedAt) return false
+    return new Date(data.deletedAt as string).getTime() < cutoff
+  })
+
+  await Promise.all(expired.map((d) => deleteDoc(d.ref)))
+  return expired.length
 }
 
 // ─── Tasks subscription ───────────────────────────────────────────────────────
