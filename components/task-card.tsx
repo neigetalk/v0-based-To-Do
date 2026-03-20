@@ -18,6 +18,7 @@ import {
 import { Task, Priority } from '@/lib/types'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
+import { useT } from '@/lib/i18n'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,6 +57,7 @@ export function TaskCard({
   onRestore,
   onPermanentDelete,
 }: TaskCardProps) {
+  const { t } = useT()
   const priorityColors = {
     low: 'border-l-gray-400',
     medium: 'border-l-[#4CD964]',
@@ -139,8 +141,8 @@ export function TaskCard({
 
             <div className="mt-1 text-xs text-gray-500">
               {mode === 'calendar'
-                ? `Start: ${format(task.startDate, 'p')}`
-                : `Due: ${format(task.dueDate, 'p')}`}
+                ? `${t.labelStart}: ${format(task.startDate, 'p')}`
+                : `${t.labelDue}: ${format(task.dueDate, 'p')}`}
             </div>
           </div>
 
@@ -149,7 +151,7 @@ export function TaskCard({
               <button
                 type="button"
                 onClick={(e) => e.stopPropagation()}
-                className="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center justify-center size-8 rounded-md hover:bg-gray-100 text-gray-600"
+                className="inline-flex shrink-0 items-center justify-center size-8 rounded-md text-gray-500 hover:text-[#4CD964] hover:bg-gray-100 transition-colors"
                 aria-label="Task actions"
                 title="Actions"
               >
@@ -161,7 +163,7 @@ export function TaskCard({
                 onSelect={() => onOpenDetails(task)}
                 className="cursor-pointer"
               >
-                Open details
+                {t.openDetails}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
 
@@ -169,7 +171,7 @@ export function TaskCard({
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className="cursor-pointer">
                   <Flag className="size-4 mr-2 text-gray-500" />
-                  Priority
+                  {t.menuPriority}
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className="bg-white">
                   <DropdownMenuItem
@@ -177,21 +179,21 @@ export function TaskCard({
                     className={cn('cursor-pointer', task.priority === 'high' && 'font-semibold')}
                   >
                     <Flag className="size-4 mr-2 text-[#FF3B30]" />
-                    High
+                    {t.priorityHigh}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onSelect={() => onChangePriority(task.id, 'medium')}
                     className={cn('cursor-pointer', task.priority === 'medium' && 'font-semibold')}
                   >
                     <Flag className="size-4 mr-2 text-[#4CD964]" />
-                    Medium
+                    {t.priorityMedium}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onSelect={() => onChangePriority(task.id, 'low')}
                     className={cn('cursor-pointer', task.priority === 'low' && 'font-semibold')}
                   >
                     <Flag className="size-4 mr-2 text-gray-400" />
-                    Low
+                    {t.priorityLow}
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
@@ -204,7 +206,7 @@ export function TaskCard({
                   className="cursor-pointer"
                 >
                   <Archive className="size-4 text-[#4CD964]" />
-                  Archive
+                  {t.menuArchive}
                 </DropdownMenuItem>
               )}
 
@@ -214,7 +216,7 @@ export function TaskCard({
                   className="cursor-pointer"
                 >
                   <RotateCcw className="size-4 text-[#4CD964]" />
-                  Restore
+                  {t.menuRestore}
                 </DropdownMenuItem>
               )}
 
@@ -224,7 +226,7 @@ export function TaskCard({
                   className="cursor-pointer"
                 >
                   <Trash2 className="size-4 text-[#4CD964]" />
-                  Delete
+                  {t.menuDelete}
                 </DropdownMenuItem>
               )}
 
@@ -235,7 +237,7 @@ export function TaskCard({
                     className="cursor-pointer"
                   >
                     <RotateCcw className="size-4 text-[#4CD964]" />
-                    Restore
+                    {t.menuRestore}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     variant="destructive"
@@ -243,7 +245,7 @@ export function TaskCard({
                     className="cursor-pointer"
                   >
                     <Trash2 className="size-4" />
-                    Delete permanently
+                    {t.menuDeletePermanently}
                   </DropdownMenuItem>
                 </>
               )}
@@ -264,7 +266,7 @@ export function TaskCard({
           title="Priority"
           aria-label="Priority"
         >
-          {task.priority === 'high' ? 'High' : task.priority === 'medium' ? 'Medium' : 'Low'}
+          {task.priority === 'high' ? t.priorityHigh : task.priority === 'medium' ? t.priorityMedium : t.priorityLow}
         </span>
       </div>
     </motion.div>

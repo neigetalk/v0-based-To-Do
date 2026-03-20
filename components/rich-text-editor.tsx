@@ -11,6 +11,7 @@ import { Bold, Italic, ListChecks, Table as TableIcon, Underline as UnderlineIco
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useHasMounted } from '@/hooks/use-has-mounted'
+import { useT } from '@/lib/i18n'
 
 interface RichTextEditorProps {
   valueHtml: string
@@ -19,6 +20,7 @@ interface RichTextEditorProps {
 
 export function RichTextEditor({ valueHtml, onChangeHtml }: RichTextEditorProps) {
   const hasMounted = useHasMounted()
+  const { t } = useT()
   const lastEmitted = useRef<string>(valueHtml)
   const debounceRef = useRef<number | null>(null)
 
@@ -93,8 +95,8 @@ export function RichTextEditor({ valueHtml, onChangeHtml }: RichTextEditorProps)
           size="icon"
           className="hover:bg-gray-100"
           onClick={() => editor?.chain().focus().toggleBold().run()}
-          aria-label="Bold"
-          title="Bold"
+          aria-label={t.editorBold}
+          title={t.editorBold}
         >
           <Bold className="size-4" />
         </Button>
@@ -104,8 +106,8 @@ export function RichTextEditor({ valueHtml, onChangeHtml }: RichTextEditorProps)
           size="icon"
           className="hover:bg-gray-100"
           onClick={() => editor?.chain().focus().toggleItalic().run()}
-          aria-label="Italic"
-          title="Italic"
+          aria-label={t.editorItalic}
+          title={t.editorItalic}
         >
           <Italic className="size-4" />
         </Button>
@@ -115,8 +117,8 @@ export function RichTextEditor({ valueHtml, onChangeHtml }: RichTextEditorProps)
           size="icon"
           className="hover:bg-gray-100"
           onClick={() => editor?.chain().focus().toggleUnderline().run()}
-          aria-label="Underline"
-          title="Underline"
+          aria-label={t.editorUnderline}
+          title={t.editorUnderline}
         >
           <UnderlineIcon className="size-4" />
         </Button>
@@ -129,8 +131,8 @@ export function RichTextEditor({ valueHtml, onChangeHtml }: RichTextEditorProps)
           onClick={() =>
             editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
           }
-          aria-label="Insert table"
-          title="Insert table"
+          aria-label={t.editorTable}
+          title={t.editorTable}
         >
           <TableIcon className="size-4" />
         </Button>
@@ -140,15 +142,15 @@ export function RichTextEditor({ valueHtml, onChangeHtml }: RichTextEditorProps)
           size="icon"
           className="hover:bg-gray-100"
           onClick={() => editor?.chain().focus().toggleTaskList().run()}
-          aria-label="Checklist"
-          title="Checklist"
+          aria-label={t.editorChecklist}
+          title={t.editorChecklist}
         >
           <ListChecks className="size-4" />
         </Button>
       </div>
 
       <EditorContent editor={editor} />
-      {!editor && <div className={cn('text-sm text-gray-500')}>Loading editor…</div>}
+      {!editor && <div className={cn('text-sm text-gray-500')}>{t.editorLoading}</div>}
     </div>
   )
 }

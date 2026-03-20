@@ -14,9 +14,11 @@ import { TaskDetailDialog } from '@/components/task-detail-dialog'
 import { ManageCategoriesDialog } from '@/components/manage-categories-dialog'
 import { useHasMounted } from '@/hooks/use-has-mounted'
 import { useTasks } from '@/hooks/use-tasks'
+import { useT } from '@/lib/i18n'
 
 export function CalendarTodo() {
   const hasMounted = useHasMounted()
+  const { t, lang, setLang } = useT()
 
   const {
     tasks,
@@ -90,7 +92,7 @@ export function CalendarTodo() {
                 animate={{ opacity: 1, x: 0 }}
                 className="text-2xl md:text-3xl font-bold text-gray-900"
               >
-                Calendar Todo
+                {t.appTitle}
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, x: -20 }}
@@ -98,11 +100,23 @@ export function CalendarTodo() {
                 transition={{ delay: 0.1 }}
                 className="text-gray-600 mt-1"
               >
-                Switch between Calendar and Board views
+                {t.appSubtitle}
               </motion.p>
             </div>
 
             <div className="flex items-center gap-3">
+              {/* Language toggle */}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setLang(lang === 'en' ? 'ko' : 'en')}
+                className="border-gray-300 text-gray-700 hover:bg-white/70 min-w-[42px] font-semibold"
+                title={lang === 'en' ? '한국어로 전환' : 'Switch to English'}
+              >
+                {t.langToggle}
+              </Button>
+
               {/* Manage categories button */}
               <Button
                 type="button"
@@ -112,7 +126,7 @@ export function CalendarTodo() {
                 className="border-gray-300 text-gray-700 hover:bg-white/70 gap-1.5"
               >
                 <Settings2 className="size-4" />
-                Categories
+                {t.categoriesBtn}
               </Button>
 
               <Tabs
@@ -122,10 +136,10 @@ export function CalendarTodo() {
               >
                 <TabsList className="w-full md:w-auto">
                   <TabsTrigger value="calendar" className="flex-1">
-                    Calendar
+                    {t.viewCalendar}
                   </TabsTrigger>
                   <TabsTrigger value="board" className="flex-1">
-                    Board
+                    {t.viewBoard}
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -145,9 +159,9 @@ export function CalendarTodo() {
               className="w-full"
             >
               <TabsList className="w-full">
-                <TabsTrigger value="active" className="flex-1">Active</TabsTrigger>
-                <TabsTrigger value="archived" className="flex-1">Archived</TabsTrigger>
-                <TabsTrigger value="trash" className="flex-1">Trash</TabsTrigger>
+                <TabsTrigger value="active" className="flex-1">{t.scopeActive}</TabsTrigger>
+                <TabsTrigger value="archived" className="flex-1">{t.scopeArchived}</TabsTrigger>
+                <TabsTrigger value="trash" className="flex-1">{t.scopeTrash}</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
@@ -155,7 +169,7 @@ export function CalendarTodo() {
 
         {loading ? (
           <div className="flex items-center justify-center h-64 text-gray-500">
-            Loading tasks…
+            {t.loadingTasks}
           </div>
         ) : viewMode === 'calendar' ? (
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6">
@@ -216,7 +230,7 @@ export function CalendarTodo() {
           className="size-14 rounded-full bg-[#4CD964] hover:bg-[#4CD964]/90 text-white shadow-lg hover:shadow-xl transition-shadow"
         >
           <Plus className="size-6" />
-          <span className="sr-only">Add new task</span>
+          <span className="sr-only">{t.addNewTask}</span>
         </Button>
       </motion.div>
 

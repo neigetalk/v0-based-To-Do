@@ -15,10 +15,11 @@ import {
   subMonths,
 } from 'date-fns'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Task } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useT } from '@/lib/i18n'
 
 interface MonthlyCalendarProps {
   currentMonth: Date
@@ -39,6 +40,7 @@ export function MonthlyCalendar({
   onDrop,
   isDragging,
 }: MonthlyCalendarProps) {
+  const { t } = useT()
   const days = useMemo(() => {
     const monthStart = startOfMonth(currentMonth)
     const monthEnd = endOfMonth(currentMonth)
@@ -52,7 +54,7 @@ export function MonthlyCalendar({
     return tasks.filter((task) => isSameDay(task.date, date))
   }
 
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const weekDays = t.weekDays
 
   return (
     <motion.div
@@ -87,7 +89,7 @@ export function MonthlyCalendar({
             }}
             className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           >
-            Today
+            {t.todayBtn}
           </Button>
           <Button
             variant="ghost"
@@ -114,7 +116,6 @@ export function MonthlyCalendar({
       <div className="grid grid-cols-7 gap-1 flex-1">
         {days.map((day, index) => {
             const dayTasks = getTasksForDate(day)
-            const hasHigh = dayTasks.some((t) => t.priority === 'high' && !t.completed)
             const isSelected = isSameDay(day, selectedDate)
             const isCurrentMonth = isSameMonth(day, currentMonth)
             const isTodayDate = isToday(day)
@@ -156,13 +157,7 @@ export function MonthlyCalendar({
                         animate={{ scale: 1 }}
                         className={cn(
                           'size-1.5 rounded-full',
-                          task.completed
-                            ? 'bg-gray-300'
-                            : task.priority === 'high'
-                            ? 'bg-[#FF3B30]'
-                            : task.priority === 'medium'
-                            ? 'bg-[#4CD964]'
-                            : 'bg-gray-400'
+                          task.completed ? 'bg-gray-300' : 'bg-gray-500'
                         )}
                       />
                     ))}
@@ -172,14 +167,6 @@ export function MonthlyCalendar({
                       </span>
                     )}
                   </div>
-                )}
-
-                {hasHigh && !isSelected && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute top-1 right-1 size-2 bg-[#FF3B30] rounded-full"
-                  />
                 )}
               </motion.button>
             )

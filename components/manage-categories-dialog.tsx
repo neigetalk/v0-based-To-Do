@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { useT } from '@/lib/i18n'
 
 interface ManageCategoriesDialogProps {
   open: boolean
@@ -36,6 +37,7 @@ export function ManageCategoriesDialog({
   const [editValue, setEditValue] = useState('')
   const [pendingDelete, setPendingDelete] = useState<string | null>(null)
   const [newCategoryName, setNewCategoryName] = useState('')
+  const { t } = useT()
 
   const taskCountForCategory = (name: string) =>
     tasks.filter((t) => t.category === name && !t.isDeleted).length
@@ -78,7 +80,7 @@ export function ManageCategoriesDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-white max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-gray-900">Manage Categories</DialogTitle>
+          <DialogTitle className="text-gray-900">{t.manageCatTitle}</DialogTitle>
         </DialogHeader>
 
         {/* Add new category */}
@@ -86,7 +88,7 @@ export function ManageCategoriesDialog({
           <Input
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
-            placeholder="New category name…"
+            placeholder={t.manageCatNewPlaceholder}
             className="bg-gray-50 border-gray-200 text-gray-900"
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleAddNew()
@@ -100,7 +102,7 @@ export function ManageCategoriesDialog({
             className="bg-[#4CD964] text-white hover:bg-[#4CD964]/90 shrink-0"
           >
             <Plus className="size-4 mr-1" />
-            Add
+            {t.btnAdd}
           </Button>
         </div>
 
@@ -108,7 +110,7 @@ export function ManageCategoriesDialog({
         <div className="space-y-2 mt-1">
           {categories.length === 0 && (
             <p className="text-sm text-gray-400 text-center py-4">
-              No categories yet.
+              {t.manageCatEmpty}
             </p>
           )}
 
@@ -160,17 +162,15 @@ export function ManageCategoriesDialog({
                   <>
                     <AlertTriangle className="size-4 text-red-500 shrink-0" />
                     <p className="flex-1 text-sm text-red-600">
-                      {count > 0
-                        ? `Delete "${cat}"? ${count} task${count !== 1 ? 's' : ''} will be reassigned to 기타.`
-                        : `Delete "${cat}"?`}
+                      {t.manageCatDelete(cat, count)}
                     </p>
                     <button
                       type="button"
                       onClick={confirmDelete}
                       className="text-red-500 hover:text-red-700 p-1 font-medium text-xs"
-                      title="Confirm delete"
+                      title={t.manageCatDeleteBtn}
                     >
-                      Delete
+                      {t.manageCatDeleteBtn}
                     </button>
                     <button
                       type="button"
@@ -188,7 +188,7 @@ export function ManageCategoriesDialog({
                     </span>
                     {count > 0 && (
                       <span className="text-xs text-gray-400 shrink-0">
-                        {count} task{count !== 1 ? 's' : ''}
+                        {t.manageCatTaskCount(count)}
                       </span>
                     )}
                     <button
@@ -224,7 +224,7 @@ export function ManageCategoriesDialog({
             className="text-gray-700 border-gray-200"
             onClick={() => onOpenChange(false)}
           >
-            Done
+            {t.manageCatDone}
           </Button>
         </div>
       </DialogContent>

@@ -6,6 +6,7 @@ import { CalendarDays, ListTodo } from 'lucide-react'
 import { Task, Priority } from '@/lib/types'
 import { TaskCard } from './task-card'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useT } from '@/lib/i18n'
 
 interface TaskListProps {
   selectedDate: Date
@@ -23,10 +24,15 @@ interface TaskListProps {
   onPermanentDelete: (id: string) => void
 }
 
-function getDateLabel(date: Date): string {
-  if (isToday(date)) return 'Today'
-  if (isTomorrow(date)) return 'Tomorrow'
-  if (isYesterday(date)) return 'Yesterday'
+function getDateLabel(
+  date: Date,
+  today: string,
+  tomorrow: string,
+  yesterday: string,
+): string {
+  if (isToday(date)) return today
+  if (isTomorrow(date)) return tomorrow
+  if (isYesterday(date)) return yesterday
   return format(date, 'EEEE, MMMM d')
 }
 
@@ -45,6 +51,7 @@ export function TaskList({
   onRestore,
   onPermanentDelete,
 }: TaskListProps) {
+  const { t } = useT()
   const completedCount = tasks.filter((t) => t.completed).length
   const totalCount = tasks.length
 
@@ -64,7 +71,7 @@ export function TaskList({
             animate={{ opacity: 1, y: 0 }}
             className="text-xl font-semibold text-gray-900"
           >
-            {getDateLabel(selectedDate)}
+            {getDateLabel(selectedDate, t.dateToday, t.dateTomorrow, t.dateYesterday)}
           </motion.h2>
           <p className="text-sm text-gray-500 mt-1">
             {format(selectedDate, 'MMMM d, yyyy')}
@@ -72,9 +79,7 @@ export function TaskList({
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <ListTodo className="size-4" />
-          <span>
-            {completedCount}/{totalCount} completed
-          </span>
+          <span>{t.completedCount(completedCount, totalCount)}</span>
         </div>
       </div>
 
@@ -86,8 +91,8 @@ export function TaskList({
             className="flex flex-col items-center justify-center py-12 text-gray-400"
           >
             <CalendarDays className="size-12 mb-4 opacity-50" />
-            <p className="text-sm">No tasks for this date</p>
-            <p className="text-xs mt-1">Click the + button to add a task</p>
+            <p className="text-sm">{t.noTasksTitle}</p>
+            <p className="text-xs mt-1">{t.noTasksHint}</p>
           </motion.div>
         ) : (
           <div className="flex flex-col gap-3">

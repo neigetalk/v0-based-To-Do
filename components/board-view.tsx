@@ -37,6 +37,8 @@ import {
 import { cn } from '@/lib/utils'
 import type { Task, TaskStatus, Priority } from '@/lib/types'
 import { useHasMounted } from '@/hooks/use-has-mounted'
+import { useT } from '@/lib/i18n'
+import type { Translations } from '@/lib/i18n'
 
 interface BoardViewProps {
   tasks: Task[]
@@ -63,18 +65,13 @@ function getDueDateTone(dueDate: Date, now: Date) {
   return 'normal'
 }
 
-function getStatusKorean(status: TaskStatus) {
+function getStatusLabel(status: TaskStatus, t: Translations) {
   switch (status) {
-    case 'To Do':
-      return '할 일'
-    case 'In Progress':
-      return '진행 중'
-    case 'Review':
-      return '검토 중'
-    case 'Done':
-      return '완료'
-    default:
-      return status
+    case 'To Do': return t.statusToDo
+    case 'In Progress': return t.statusInProgress
+    case 'Review': return t.statusReview
+    case 'Done': return t.statusDone
+    default: return status
   }
 }
 
@@ -117,6 +114,7 @@ export function BoardView({
   onCategoryFilterChange,
 }: BoardViewProps) {
   const hasMounted = useHasMounted()
+  const { t } = useT()
   const now = new Date()
   const [dragOverStatus, setDragOverStatus] = useState<TaskStatus | null>(null)
 
@@ -165,9 +163,9 @@ export function BoardView({
       <div className="flex flex-col bg-white/50 rounded-2xl p-6 shadow-sm backdrop-blur-sm min-h-[520px]">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Board</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{t.boardTitle}</h2>
             <p className="text-sm text-gray-500 mt-1">
-              Drag cards to update status
+              {t.boardSubtitle}
             </p>
           </div>
 
@@ -177,7 +175,7 @@ export function BoardView({
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="All">All categories</SelectItem>
+                <SelectItem value="All">{t.boardAllCategories}</SelectItem>
                 {categories.map((c) => (
                   <SelectItem key={c} value={c}>
                     {c}
@@ -217,7 +215,7 @@ export function BoardView({
                   >
                     <div className="flex items-center justify-between gap-2 mb-3">
                       <div className="text-sm font-semibold text-gray-900">
-                        {getStatusKorean(status)}
+                        {getStatusLabel(status, t)}
                       </div>
                       <div className="text-xs text-gray-500">
                         {colTasks.length}
@@ -227,7 +225,7 @@ export function BoardView({
                     <AnimatePresence mode="popLayout">
                       {colTasks.length === 0 ? (
                         <div className="text-xs text-gray-400 py-6 text-center">
-                          Drop here
+                          {t.boardDropHere}
                         </div>
                       ) : (
                         colTasks.map((task) => {
@@ -310,7 +308,7 @@ export function BoardView({
                                       <button
                                         type="button"
                                         onClick={(e) => e.stopPropagation()}
-                                        className="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center justify-center size-8 rounded-md hover:bg-gray-100 text-gray-600"
+                                        className="inline-flex shrink-0 items-center justify-center size-8 rounded-md text-gray-500 hover:text-[#4CD964] hover:bg-gray-100 transition-colors"
                                         aria-label="Task actions"
                                         title="Actions"
                                       >
@@ -322,7 +320,7 @@ export function BoardView({
                                         onSelect={() => onOpenDetails(task)}
                                         className="cursor-pointer"
                                       >
-                                        Open details
+                                        {t.openDetails}
                                       </DropdownMenuItem>
                                       <DropdownMenuSeparator />
 
@@ -330,7 +328,7 @@ export function BoardView({
                                       <DropdownMenuSub>
                                         <DropdownMenuSubTrigger className="cursor-pointer">
                                           <Flag className="size-4 mr-2 text-gray-500" />
-                                          Priority
+                                          {t.menuPriority}
                                         </DropdownMenuSubTrigger>
                                         <DropdownMenuSubContent className="bg-white">
                                           <DropdownMenuItem
@@ -338,21 +336,21 @@ export function BoardView({
                                             className={cn('cursor-pointer', task.priority === 'high' && 'font-semibold')}
                                           >
                                             <Flag className="size-4 mr-2 text-[#FF3B30]" />
-                                            High
+                                            {t.priorityHigh}
                                           </DropdownMenuItem>
                                           <DropdownMenuItem
                                             onSelect={() => onChangePriority(task.id, 'medium')}
                                             className={cn('cursor-pointer', task.priority === 'medium' && 'font-semibold')}
                                           >
                                             <Flag className="size-4 mr-2 text-[#4CD964]" />
-                                            Medium
+                                            {t.priorityMedium}
                                           </DropdownMenuItem>
                                           <DropdownMenuItem
                                             onSelect={() => onChangePriority(task.id, 'low')}
                                             className={cn('cursor-pointer', task.priority === 'low' && 'font-semibold')}
                                           >
                                             <Flag className="size-4 mr-2 text-gray-400" />
-                                            Low
+                                            {t.priorityLow}
                                           </DropdownMenuItem>
                                         </DropdownMenuSubContent>
                                       </DropdownMenuSub>
@@ -365,7 +363,7 @@ export function BoardView({
                                           className="cursor-pointer"
                                         >
                                           <Archive className="size-4 text-[#4CD964]" />
-                                          Archive
+                                          {t.menuArchive}
                                         </DropdownMenuItem>
                                       )}
 
@@ -375,7 +373,7 @@ export function BoardView({
                                           className="cursor-pointer"
                                         >
                                           <RotateCcw className="size-4 text-[#4CD964]" />
-                                          Restore
+                                          {t.menuRestore}
                                         </DropdownMenuItem>
                                       )}
 
@@ -385,7 +383,7 @@ export function BoardView({
                                           className="cursor-pointer"
                                         >
                                           <Trash2 className="size-4 text-[#4CD964]" />
-                                          Delete
+                                          {t.menuDelete}
                                         </DropdownMenuItem>
                                       )}
 
@@ -396,7 +394,7 @@ export function BoardView({
                                             className="cursor-pointer"
                                           >
                                             <RotateCcw className="size-4 text-[#4CD964]" />
-                                            Restore
+                                            {t.menuRestore}
                                           </DropdownMenuItem>
                                           <DropdownMenuItem
                                             variant="destructive"
@@ -404,7 +402,7 @@ export function BoardView({
                                             className="cursor-pointer"
                                           >
                                             <Trash2 className="size-4" />
-                                            Delete permanently
+                                            {t.menuDeletePermanently}
                                           </DropdownMenuItem>
                                         </>
                                       )}
@@ -420,7 +418,7 @@ export function BoardView({
 
                                 <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                                   <span className="text-gray-500">
-                                    Due: <span className={cn('font-medium', dueClass)}>{format(task.dueDate, 'MMM d, p')}</span>
+                                    {t.labelDue}: <span className={cn('font-medium', dueClass)}>{format(task.dueDate, 'MMM d, p')}</span>
                                   </span>
                                 </div>
                               </div>

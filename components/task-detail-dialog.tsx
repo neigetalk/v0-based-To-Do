@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useHasMounted } from '@/hooks/use-has-mounted'
+import { useT } from '@/lib/i18n'
 
 interface TaskDetailDialogProps {
   open: boolean
@@ -51,23 +52,11 @@ function toTimeValue(d: Date) {
   return `${hh}:${mm}`
 }
 
-const PRIORITIES: { value: Priority; label: string; activeClass: string }[] = [
-  {
-    value: 'high',
-    label: 'High',
-    activeClass: 'bg-[#FF3B30] text-white border-[#FF3B30]',
-  },
-  {
-    value: 'medium',
-    label: 'Medium',
-    activeClass: 'bg-[#4CD964] text-white border-[#4CD964]',
-  },
-  {
-    value: 'low',
-    label: 'Low',
-    activeClass: 'bg-gray-400 text-white border-gray-400',
-  },
-]
+const PRIORITY_ACTIVE_CLASSES: Record<Priority, string> = {
+  high: 'bg-[#FF3B30] text-white border-[#FF3B30]',
+  medium: 'bg-[#4CD964] text-white border-[#4CD964]',
+  low: 'bg-gray-400 text-white border-gray-400',
+}
 
 export function TaskDetailDialog({
   open,
@@ -79,6 +68,7 @@ export function TaskDetailDialog({
   onOpenManageCategories,
 }: TaskDetailDialogProps) {
   const hasMounted = useHasMounted()
+  const { t } = useT()
   const [localTitle, setLocalTitle] = useState('')
   const [localNotes, setLocalNotes] = useState('')
   const [localStart, setLocalStart] = useState<Date>(new Date())
@@ -142,7 +132,7 @@ export function TaskDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-4xl bg-white max-h-[90vh] overflow-y-auto overflow-x-auto">
         <DialogHeader>
-          <DialogTitle className="text-gray-900">Task details</DialogTitle>
+          <DialogTitle className="text-gray-900">{t.detailTitle}</DialogTitle>
         </DialogHeader>
 
         {/* Hero image */}
@@ -158,7 +148,7 @@ export function TaskDetailDialog({
           <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50/60 p-6 text-sm text-gray-500 flex items-center justify-center">
             <span className="inline-flex items-center gap-2">
               <ImageIcon className="size-4" />
-              No image attached
+              {t.detailNoImage}
             </span>
           </div>
         )}
@@ -167,7 +157,7 @@ export function TaskDetailDialog({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-gray-700" htmlFor="task-title">
-                Title
+                {t.detailTitle2}
               </Label>
               <Input
                 id="task-title"
@@ -183,25 +173,25 @@ export function TaskDetailDialog({
           <div className="space-y-5">
             {/* Classification card */}
             <div className="rounded-2xl border border-gray-200 bg-white/70 p-4 space-y-4">
-              <div className="text-sm font-semibold text-gray-900">Classification</div>
+              <div className="text-sm font-semibold text-gray-900">{t.detailClassification}</div>
 
               {/* Priority */}
               <div className="space-y-2">
-                <Label className="text-gray-700">Priority</Label>
+                <Label className="text-gray-700">{t.fieldPriority}</Label>
                 <div className="flex gap-2">
-                  {PRIORITIES.map((p) => (
+                  {(['high', 'medium', 'low'] as Priority[]).map((p) => (
                     <button
-                      key={p.value}
+                      key={p}
                       type="button"
-                      onClick={() => setLocalPriority(p.value)}
+                      onClick={() => setLocalPriority(p)}
                       className={cn(
                         'flex-1 py-1.5 px-2 rounded-lg text-xs font-medium border transition-colors',
-                        localPriority === p.value
-                          ? p.activeClass
+                        localPriority === p
+                          ? PRIORITY_ACTIVE_CLASSES[p]
                           : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-gray-300'
                       )}
                     >
-                      {p.label}
+                      {p === 'high' ? t.priorityHigh : p === 'medium' ? t.priorityMedium : t.priorityLow}
                     </button>
                   ))}
                 </div>
@@ -210,23 +200,23 @@ export function TaskDetailDialog({
               {/* Category */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label className="text-gray-700">Category</Label>
+                  <Label className="text-gray-700">{t.fieldCategory}</Label>
                   {onOpenManageCategories && (
                     <button
                       type="button"
                       onClick={onOpenManageCategories}
                       className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-[#4CD964] transition-colors"
-                      title="Manage categories"
+                      title={t.fieldManage}
                     >
                       <Settings2 className="size-3.5" />
-                      Manage
+                      {t.fieldManage}
                     </button>
                   )}
                 </div>
 
                 <Select value={localCategory} onValueChange={setLocalCategory}>
                   <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900">
-                    <SelectValue placeholder="Choose category" />
+                    <SelectValue placeholder={t.fieldCategoryPlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((c) => (
@@ -241,7 +231,7 @@ export function TaskDetailDialog({
                   <Input
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    placeholder="Quick-add category…"
+                    placeholder={t.fieldQuickAddPlaceholder}
                     className="bg-gray-50 border-gray-200 text-gray-900 text-sm"
                     onKeyDown={(e) => {
                       if (e.key !== 'Enter') return
@@ -263,38 +253,35 @@ export function TaskDetailDialog({
                       setNewCategory('')
                     }}
                   >
-                    Add
+                    {t.btnAdd}
                   </Button>
                 </div>
               </div>
 
               {/* Status */}
               <div className="space-y-2">
-                <Label className="text-gray-700">Status</Label>
+                <Label className="text-gray-700">{t.fieldStatus}</Label>
                 <div className="flex items-center justify-between gap-3">
                   <Select
                     value={localStatus}
                     onValueChange={(v) => setLocalStatus(v as TaskStatus)}
                   >
                     <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900">
-                      <SelectValue placeholder="Choose status" />
+                      <SelectValue placeholder={t.fieldStatusPlaceholder} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="To Do">할 일</SelectItem>
-                      <SelectItem value="In Progress">진행 중</SelectItem>
-                      <SelectItem value="Review">검토 중</SelectItem>
-                      <SelectItem value="Done">완료</SelectItem>
+                      <SelectItem value="To Do">{t.statusToDo}</SelectItem>
+                      <SelectItem value="In Progress">{t.statusInProgress}</SelectItem>
+                      <SelectItem value="Review">{t.statusReview}</SelectItem>
+                      <SelectItem value="Done">{t.statusDone}</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <span className={cn('text-xs font-medium px-2 py-1 rounded-full shrink-0', statusTone)}>
-                    {localStatus === 'To Do'
-                      ? '할 일'
-                      : localStatus === 'In Progress'
-                        ? '진행 중'
-                        : localStatus === 'Review'
-                          ? '검토 중'
-                          : '완료'}
+                    {localStatus === 'To Do' ? t.statusToDo
+                      : localStatus === 'In Progress' ? t.statusInProgress
+                      : localStatus === 'Review' ? t.statusReview
+                      : t.statusDone}
                   </span>
                 </div>
               </div>
@@ -302,11 +289,11 @@ export function TaskDetailDialog({
 
             {/* Scheduling card */}
             <div className="rounded-2xl border border-gray-200 bg-white/70 p-4">
-              <div className="text-sm font-semibold text-gray-900">Scheduling</div>
+              <div className="text-sm font-semibold text-gray-900">{t.detailScheduling}</div>
 
               <div className="mt-4 space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-gray-700">Start</Label>
+                  <Label className="text-gray-700">{t.fieldStart}</Label>
                   <div className="grid grid-cols-[1fr_110px] gap-2">
                     <Popover>
                       <PopoverTrigger asChild>
@@ -340,7 +327,7 @@ export function TaskDetailDialog({
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-gray-700">Due</Label>
+                  <Label className="text-gray-700">{t.fieldDue}</Label>
                   <div className="grid grid-cols-[1fr_110px] gap-2">
                     <Popover>
                       <PopoverTrigger asChild>
@@ -377,7 +364,7 @@ export function TaskDetailDialog({
 
             {/* Attachment card */}
             <div className="rounded-2xl border border-gray-200 bg-white/70 p-4">
-              <div className="text-sm font-semibold text-gray-900">Attachment</div>
+              <div className="text-sm font-semibold text-gray-900">{t.detailAttachment}</div>
 
               <div className="mt-3 space-y-3">
                 <Input
@@ -399,7 +386,7 @@ export function TaskDetailDialog({
 
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-500">
-                    Images are stored locally in memory (demo).
+                    {t.detailImageNote}
                   </span>
                   {localImage && (
                     <Button
@@ -409,7 +396,7 @@ export function TaskDetailDialog({
                       className="border-gray-200 text-gray-700"
                       onClick={() => setLocalImage(undefined)}
                     >
-                      Remove
+                      {t.detailRemoveImage}
                     </Button>
                   )}
                 </div>
@@ -423,14 +410,14 @@ export function TaskDetailDialog({
                 className="text-gray-700 border-gray-200"
                 onClick={() => onOpenChange(false)}
               >
-                Cancel
+                {t.btnCancel}
               </Button>
               <Button
                 type="button"
                 className="bg-[#4CD964] text-white hover:bg-[#4CD964]/90"
                 onClick={handleSave}
               >
-                Save
+                {t.btnSave}
               </Button>
             </div>
           </div>

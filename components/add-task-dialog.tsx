@@ -22,6 +22,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
+import { useT } from '@/lib/i18n'
 import {
   Select,
   SelectContent,
@@ -56,6 +57,7 @@ export function AddTaskDialog({
   onAddCategory,
   onOpenManageCategories,
 }: AddTaskDialogProps) {
+  const { t } = useT()
   const setDatePart = (base: Date, day: Date) => {
     const next = new Date(base)
     next.setFullYear(day.getFullYear(), day.getMonth(), day.getDate())
@@ -111,35 +113,35 @@ export function AddTaskDialog({
   }
 
   const priorities: { value: Priority; label: string; color: string }[] = [
-    { value: 'low', label: 'Low', color: 'bg-gray-200 text-gray-700 hover:bg-gray-300' },
-    { value: 'medium', label: 'Medium', color: 'bg-[#4CD964]/20 text-[#4CD964] hover:bg-[#4CD964]/30' },
-    { value: 'high', label: 'High', color: 'bg-[#FF3B30]/20 text-[#FF3B30] hover:bg-[#FF3B30]/30' },
+    { value: 'low', label: t.priorityLow, color: 'bg-gray-200 text-gray-700 hover:bg-gray-300' },
+    { value: 'medium', label: t.priorityMedium, color: 'bg-[#4CD964]/20 text-[#4CD964] hover:bg-[#4CD964]/30' },
+    { value: 'high', label: t.priorityHigh, color: 'bg-[#FF3B30]/20 text-[#FF3B30] hover:bg-[#FF3B30]/30' },
   ]
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-white">
         <DialogHeader>
-          <DialogTitle className="text-gray-900">Add New Task</DialogTitle>
+          <DialogTitle className="text-gray-900">{t.addTaskTitle}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4 py-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="title" className="text-gray-700">
-                Task Title
+                {t.fieldTaskTitle}
               </Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter task title..."
+                placeholder={t.fieldTaskPlaceholder}
                 className="bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400"
                 autoFocus
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-gray-700">Start</Label>
+              <Label className="text-gray-700">{t.fieldStart}</Label>
               <div className="grid grid-cols-[1fr_110px] gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -175,7 +177,7 @@ export function AddTaskDialog({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-gray-700">Due</Label>
+              <Label className="text-gray-700">{t.fieldDue}</Label>
               <div className="grid grid-cols-[1fr_110px] gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -211,7 +213,7 @@ export function AddTaskDialog({
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label className="text-gray-700">Priority</Label>
+              <Label className="text-gray-700">{t.fieldPriority}</Label>
               <div className="flex gap-2">
                 <AnimatePresence>
                   {priorities.map((p) => (
@@ -237,16 +239,16 @@ export function AddTaskDialog({
             <div className="flex flex-col gap-2">
               {/* Label row: "Category" + Manage link */}
               <div className="flex items-center justify-between">
-                <Label className="text-gray-700">Category</Label>
+                <Label className="text-gray-700">{t.fieldCategory}</Label>
                 {onOpenManageCategories && (
                   <button
                     type="button"
                     onClick={onOpenManageCategories}
                     className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-[#4CD964] transition-colors"
-                    title="Manage categories"
+                    title={t.fieldManage}
                   >
                     <Settings2 className="size-3.5" />
-                    Manage
+                    {t.fieldManage}
                   </button>
                 )}
               </div>
@@ -254,7 +256,7 @@ export function AddTaskDialog({
               {/* Dropdown */}
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900">
-                  <SelectValue placeholder="Choose category" />
+                  <SelectValue placeholder={t.fieldCategoryPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((c) => (
@@ -270,7 +272,7 @@ export function AddTaskDialog({
                 <Input
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="Quick-add category…"
+                  placeholder={t.fieldQuickAddPlaceholder}
                   className="bg-gray-50 border-gray-200 text-gray-900 text-sm"
                   onKeyDown={(e) => {
                     if (e.key !== 'Enter') return
@@ -292,22 +294,22 @@ export function AddTaskDialog({
                     setNewCategory('')
                   }}
                 >
-                  Add
+                  {t.btnAdd}
                 </Button>
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label className="text-gray-700">Status</Label>
+              <Label className="text-gray-700">{t.fieldStatus}</Label>
               <Select value={status} onValueChange={(v) => setStatus(v as TaskStatus)}>
                 <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900">
-                  <SelectValue placeholder="Choose status" />
+                  <SelectValue placeholder={t.fieldStatusPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="To Do">할 일</SelectItem>
-                  <SelectItem value="In Progress">진행 중</SelectItem>
-                  <SelectItem value="Review">검토 중</SelectItem>
-                  <SelectItem value="Done">완료</SelectItem>
+                  <SelectItem value="To Do">{t.statusToDo}</SelectItem>
+                  <SelectItem value="In Progress">{t.statusInProgress}</SelectItem>
+                  <SelectItem value="Review">{t.statusReview}</SelectItem>
+                  <SelectItem value="Done">{t.statusDone}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -320,14 +322,14 @@ export function AddTaskDialog({
               onClick={() => onOpenChange(false)}
               className="text-gray-700 border-gray-200"
             >
-              Cancel
+              {t.btnCancel}
             </Button>
             <Button
               type="submit"
               disabled={!title.trim()}
               className="bg-[#4CD964] text-white hover:bg-[#4CD964]/90"
             >
-              Add Task
+              {t.btnAddTask}
             </Button>
           </DialogFooter>
         </form>
