@@ -73,7 +73,7 @@ export function MonthlyCalendar({
               ? `${currentMonth.getMonth() + 1}월`
               : format(currentMonth, 'MMMM')}
           </div>
-          <div className="text-xs font-normal mt-0.5" style={{ color: '#8E8E93' }}>
+          <div className="text-sm font-normal mt-0.5" style={{ color: '#8E8E93' }}>
             {format(currentMonth, 'yyyy')}
           </div>
         </motion.div>
@@ -112,7 +112,7 @@ export function MonthlyCalendar({
         {weekDays.map((day) => (
           <div
             key={day}
-            className="text-center text-xs font-medium text-gray-500 py-2"
+            className="text-center text-sm font-medium text-gray-500 py-2"
           >
             {day}
           </div>
@@ -166,7 +166,7 @@ export function MonthlyCalendar({
               >
                 <span
                   className={cn(
-                    'text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full',
+                    'text-base font-medium w-8 h-8 flex items-center justify-center rounded-full',
                     isTodayDate && 'bg-[#4CD964] text-white'
                   )}
                 >

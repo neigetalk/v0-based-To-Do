@@ -140,7 +140,7 @@ export function CalendarTodo() {
             </div>
           </div>
 
-          {/* Archive + Trash scope toggles — icon buttons, left-aligned */}
+          {/* Archive + Trash scope toggles — icon buttons, left-aligned with content cards */}
           <div className="mt-3 flex items-center gap-1">
             <button
               type="button"
@@ -148,13 +148,13 @@ export function CalendarTodo() {
               title={t.scopeArchived}
               aria-label={t.scopeArchived}
               className={cn(
-                'inline-flex items-center justify-center size-8 rounded-lg transition-colors',
+                'inline-flex items-center justify-center size-10 rounded-lg transition-colors',
                 taskScope === 'archived'
                   ? 'text-[#4CD964] bg-[#4CD964]/10'
                   : 'text-[#8E8E93] hover:text-gray-700 hover:bg-white/60'
               )}
             >
-              <Archive className="size-4" />
+              <Archive className="size-5" />
             </button>
 
             <button
@@ -163,13 +163,13 @@ export function CalendarTodo() {
               title={t.scopeTrash}
               aria-label={t.scopeTrash}
               className={cn(
-                'inline-flex items-center justify-center size-8 rounded-lg transition-colors',
+                'inline-flex items-center justify-center size-10 rounded-lg transition-colors',
                 taskScope === 'trash'
-                  ? 'text-[#4CD964] bg-[#4CD964]/10'
+                  ? 'text-[#007AFF] bg-[#007AFF]/10'
                   : 'text-[#8E8E93] hover:text-gray-700 hover:bg-white/60'
               )}
             >
-              <Trash2 className="size-4" />
+              <Trash2 className="size-5" />
             </button>
 
             {taskScope === 'trash' && (
