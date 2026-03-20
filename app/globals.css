@@ -191,3 +191,18 @@
   color: #9CA3AF;
   text-decoration: line-through;
 }
+
+/* ── TipTap link styles ────────────────────────────────────────────────────── */
+.tiptap a,
+.tiptap .tiptap-link {
+  color: #007AFF !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+  cursor: pointer !important;
+  transition: color 0.15s ease;
+}
+
+.tiptap a:hover,
+.tiptap .tiptap-link:hover {
+  color: #0055CC !important;
+}
