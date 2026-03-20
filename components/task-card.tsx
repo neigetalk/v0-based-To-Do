@@ -146,11 +146,12 @@ export function TaskCard({
             </div>
           </div>
 
+          {/* Stop portal click events from bubbling up to the card's onClick */}
+          <div onClick={(e) => e.stopPropagation()}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                onClick={(e) => e.stopPropagation()}
                 className="inline-flex shrink-0 items-center justify-center size-8 rounded-md text-gray-500 hover:text-[#4CD964] hover:bg-gray-100 transition-colors"
                 aria-label="Task actions"
                 title="Actions"
@@ -251,6 +252,7 @@ export function TaskCard({
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
         </div>
       </div>
 

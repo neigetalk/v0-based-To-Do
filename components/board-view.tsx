@@ -303,11 +303,12 @@ export function BoardView({
                                     </span>
                                   </button>
 
+                                  {/* Stop portal click events from bubbling to the title button */}
+                                  <div onClick={(e) => e.stopPropagation()}>
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <button
                                         type="button"
-                                        onClick={(e) => e.stopPropagation()}
                                         className="inline-flex shrink-0 items-center justify-center size-8 rounded-md text-gray-500 hover:text-[#4CD964] hover:bg-gray-100 transition-colors"
                                         aria-label="Task actions"
                                         title="Actions"
@@ -408,6 +409,7 @@ export function BoardView({
                                       )}
                                     </DropdownMenuContent>
                                   </DropdownMenu>
+                                  </div>
                                 </div>
 
                                 <div className="mt-2 flex flex-wrap items-center gap-2">
