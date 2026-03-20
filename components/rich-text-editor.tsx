@@ -4,10 +4,9 @@ import { useEffect, useMemo, useRef } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
-import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
-import { Bold, Italic, ListChecks, Table as TableIcon, Underline as UnderlineIcon } from 'lucide-react'
+import { Bold, Italic, ListChecks, Underline as UnderlineIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useHasMounted } from '@/hooks/use-has-mounted'
@@ -34,15 +33,6 @@ export function RichTextEditor({ valueHtml, onChangeHtml }: RichTextEditorProps)
       Underline,
       TaskList,
       TaskItem,
-      Table.configure({
-        resizable: true,
-        HTMLAttributes: {
-          class: 'tiptap-table',
-        },
-      }),
-      TableRow,
-      TableHeader,
-      TableCell,
     ],
     []
   )
@@ -123,19 +113,6 @@ export function RichTextEditor({ valueHtml, onChangeHtml }: RichTextEditorProps)
           <UnderlineIcon className="size-4" />
         </Button>
         <div className="w-px h-5 bg-gray-200 mx-1" />
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="hover:bg-gray-100"
-          onClick={() =>
-            editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-          }
-          aria-label={t.editorTable}
-          title={t.editorTable}
-        >
-          <TableIcon className="size-4" />
-        </Button>
         <Button
           type="button"
           variant="ghost"

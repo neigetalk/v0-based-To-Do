@@ -5,7 +5,7 @@ import { format, startOfDay } from 'date-fns'
 import { CalendarIcon, Image as ImageIcon, Settings2 } from 'lucide-react'
 import { Task, Priority, RepeatType } from '@/lib/types'
 import type { TaskStatus } from '@/lib/types'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -140,10 +140,6 @@ export function TaskDetailDialog({
     !hasMounted ? null : (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-4xl bg-white max-h-[90vh] overflow-y-auto overflow-x-auto">
-        <DialogHeader>
-          <DialogTitle className="text-gray-900">{t.detailTitle}</DialogTitle>
-        </DialogHeader>
-
         {/* Hero image */}
         {localImage ? (
           <div className="rounded-2xl overflow-hidden border border-gray-200 bg-gray-50">
