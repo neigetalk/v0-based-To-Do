@@ -1,6 +1,6 @@
 export type Priority = 'low' | 'medium' | 'high'
 
-export type TaskStatus = 'To Do' | 'In Progress' | 'Review' | 'Done' | 'General'
+export type TaskStatus = 'To Do' | 'In Progress' | 'On Hold' | 'Done' | 'General'
 
 export type RepeatType = 'daily' | 'weekly' | 'monthly' | 'yearly'
 

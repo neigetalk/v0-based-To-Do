@@ -103,7 +103,7 @@ export function TaskDetailDialog({
     switch (localStatus) {
       case 'In Progress':
         return 'bg-[#4CD964]/10 text-[#4CD964]'
-      case 'Review':
+      case 'On Hold':
         return 'bg-[#007AFF]/10 text-[#007AFF]'
       case 'Done':
         return 'bg-gray-100 text-gray-600'
@@ -283,7 +283,7 @@ export function TaskDetailDialog({
                       <SelectItem value="General">{t.statusGeneral}</SelectItem>
                       <SelectItem value="To Do">{t.statusToDo}</SelectItem>
                       <SelectItem value="In Progress">{t.statusInProgress}</SelectItem>
-                      <SelectItem value="Review">{t.statusReview}</SelectItem>
+                      <SelectItem value="On Hold">{t.statusReview}</SelectItem>
                       <SelectItem value="Done">{t.statusDone}</SelectItem>
                     </SelectContent>
                   </Select>
@@ -292,7 +292,7 @@ export function TaskDetailDialog({
                     {localStatus === 'General' ? t.statusGeneral
                       : localStatus === 'To Do' ? t.statusToDo
                       : localStatus === 'In Progress' ? t.statusInProgress
-                      : localStatus === 'Review' ? t.statusReview
+                      : localStatus === 'On Hold' ? t.statusReview
                       : t.statusDone}
                   </span>
                 </div>

@@ -69,8 +69,8 @@ export function TaskCard({
     switch (task.status) {
       case 'In Progress':
         return <Clock3 {...commonProps} className="inline-block text-orange-500" aria-label="In Progress" />
-      case 'Review':
-        return <MessageSquare {...commonProps} className="inline-block text-[#007AFF]" aria-label="Review" />
+      case 'On Hold':
+        return <MessageSquare {...commonProps} className="inline-block text-[#007AFF]" aria-label="On Hold" />
       case 'Done':
         return <CheckCircle2 {...commonProps} className="inline-block text-gray-900" aria-label="Done" />
       default:

@@ -1,7 +1,7 @@
 'use client'
 
 import { type DragEvent, useMemo, useState } from 'react'
-import { differenceInHours, format, isBefore } from 'date-fns'
+import { format } from 'date-fns'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Archive,
@@ -56,23 +56,17 @@ interface BoardViewProps {
   onCategoryFilterChange: (category: string) => void
 }
 
-const STATUSES: TaskStatus[] = ['To Do', 'In Progress', 'Review', 'Done']
+const STATUSES: TaskStatus[] = ['To Do', 'In Progress', 'On Hold', 'Done']
 
 // Tasks in this category are calendar-only — hidden from the Kanban board.
 const BOARD_EXCLUDED_CATEGORY = '기본'
 
-function getDueDateTone(dueDate: Date, now: Date) {
-  if (isBefore(dueDate, now)) return 'overdue'
-  const hours = differenceInHours(dueDate, now)
-  if (hours <= 24) return 'soon'
-  return 'normal'
-}
 
 function getStatusLabel(status: TaskStatus, t: Translations) {
   switch (status) {
     case 'To Do': return t.statusToDo
     case 'In Progress': return t.statusInProgress
-    case 'Review': return t.statusReview
+    case 'On Hold': return t.statusReview
     case 'Done': return t.statusDone
     default: return status
   }
@@ -88,7 +82,7 @@ function renderStatusIcon(status: TaskStatus) {
   switch (status) {
     case 'In Progress':
       return <Clock3 {...commonProps} className="inline-block text-orange-500" />
-    case 'Review':
+    case 'On Hold':
       return (
         <MessageSquare
           {...commonProps}
@@ -228,14 +222,6 @@ export function BoardView({
                         </div>
                       ) : (
                         colTasks.map((task) => {
-                          const tone = getDueDateTone(task.dueDate, now)
-                          const dueClass =
-                            tone === 'overdue'
-                              ? 'text-red-600'
-                              : tone === 'soon'
-                                ? 'text-orange-500'
-                                : 'text-gray-500'
-
                           return (
                             <motion.div
                               key={task.id}
@@ -422,7 +408,7 @@ export function BoardView({
 
                                 <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                                   <span className="text-gray-500">
-                                    {t.labelDue}: <span className={cn('font-medium', dueClass)}>{format(task.dueDate, 'MMM d, p')}</span>
+                                    {t.labelDue}: <span className="font-medium">{format(task.dueDate, 'MMM d, p')}</span>
                                   </span>
                                 </div>
                               </div>
@@ -439,23 +425,6 @@ export function BoardView({
         </div>
       </div>
 
-      <div className="bg-white/50 rounded-2xl p-6 shadow-sm backdrop-blur-sm">
-        <h3 className="text-sm font-semibold text-gray-900">Due status</h3>
-        <div className="mt-4 space-y-3 text-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600">Normal</span>
-            <span className="font-medium text-gray-500">Gray</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600">Within 24 hours</span>
-            <span className="font-medium text-orange-500">Orange</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600">Overdue</span>
-            <span className="font-medium text-red-600">Red</span>
-          </div>
-        </div>
-      </div>
     </div>
     ) : null
   )

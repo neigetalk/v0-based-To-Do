@@ -343,7 +343,7 @@ export function AddTaskDialog({
                   <SelectItem value="General">{t.statusGeneral}</SelectItem>
                   <SelectItem value="To Do">{t.statusToDo}</SelectItem>
                   <SelectItem value="In Progress">{t.statusInProgress}</SelectItem>
-                  <SelectItem value="Review">{t.statusReview}</SelectItem>
+                  <SelectItem value="On Hold">{t.statusReview}</SelectItem>
                   <SelectItem value="Done">{t.statusDone}</SelectItem>
                 </SelectContent>
               </Select>

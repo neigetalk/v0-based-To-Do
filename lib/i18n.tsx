@@ -55,7 +55,7 @@ const dict = {
     // Status labels (display)
     statusToDo: 'To Do',
     statusInProgress: 'In Progress',
-    statusReview: 'Review',
+    statusReview: 'On Hold',
     statusDone: 'Done',
     statusGeneral: 'General',
 
@@ -172,7 +172,7 @@ const dict = {
 
     statusToDo: '할 일',
     statusInProgress: '진행 중',
-    statusReview: '검토 중',
+    statusReview: '보류 중',
     statusDone: '완료',
     statusGeneral: '기본',
 
