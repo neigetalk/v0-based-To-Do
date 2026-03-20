@@ -127,45 +127,67 @@
 /* ─── TipTap task list ─────────────────────────────────────────────────────── */
 
 /* Remove default list indentation */
-.tiptap.ProseMirror ul[data-type="taskList"] {
-  list-style: none;
-  padding-left: 0;
-  margin: 0.5em 0;
+.tiptap ul[data-type="taskList"] {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin: 0.5em 0 !important;
 }
 
-/* Each item: checkbox (label) + editable content on the same row */
-.tiptap.ProseMirror ul[data-type="taskList"] > li[data-type="taskItem"] {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 8px;
-  margin: 0.25rem 0;
-  padding: 0;
+/*
+ * Each task item: checkbox label + editable div on one horizontal line.
+ * Both the child-combinator form (> li) and the descendant form (li) are
+ * listed so the rule fires regardless of whether the prose plugin adds
+ * wrapper elements in between.
+ */
+.tiptap ul[data-type="taskList"] li,
+.tiptap ul[data-type="taskList"] > li[data-type="taskItem"] {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0.25rem 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
 }
 
-/* The <label> wrapping the actual <input> checkbox */
-.tiptap.ProseMirror ul[data-type="taskList"] > li[data-type="taskItem"] > label {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  margin-top: 2px; /* visually aligns checkbox to first text line */
+/* Checkbox wrapper label */
+.tiptap ul[data-type="taskList"] li > label,
+.tiptap ul[data-type="taskList"] > li[data-type="taskItem"] > label {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
   cursor: pointer;
 }
 
-/* The editable content div sits to the right of the checkbox */
-.tiptap.ProseMirror ul[data-type="taskList"] > li[data-type="taskItem"] > div {
-  flex: 1;
-  min-width: 0;
+/* Editable content div — flex child that takes remaining width */
+.tiptap ul[data-type="taskList"] li > div,
+.tiptap ul[data-type="taskList"] > li[data-type="taskItem"] > div {
+  flex: 1 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* Paragraphs inside task items should not push text downward */
-.tiptap.ProseMirror ul[data-type="taskList"] > li[data-type="taskItem"] > div > p {
-  margin: 0;
+/*
+ * The paragraph(s) inside the content div must NOT be block-level, otherwise
+ * they push the first line below the checkbox. display:inline keeps them on
+ * the same row as the checkbox label.
+ */
+.tiptap ul[data-type="taskList"] li p,
+.tiptap ul[data-type="taskList"] > li[data-type="taskItem"] > div > p {
+  display: inline !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* Checked state: gray + strikethrough text */
-.tiptap.ProseMirror ul[data-type="taskList"] > li[data-type="taskItem"][data-checked="true"] > div,
-.tiptap.ProseMirror ul[data-type="taskList"] > li[data-type="taskItem"][data-checked="true"] > div p {
+/* Checked state: gray + strikethrough */
+.tiptap ul[data-type="taskList"] li[data-checked="true"] > div,
+.tiptap ul[data-type="taskList"] li[data-checked="true"] > div p,
+.tiptap ul[data-type="taskList"] > li[data-type="taskItem"][data-checked="true"] > div,
+.tiptap ul[data-type="taskList"] > li[data-type="taskItem"][data-checked="true"] > div p {
   color: #9CA3AF;
   text-decoration: line-through;
 }
