@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import {
   format,
+  startOfDay,
   startOfMonth,
   endOfMonth,
   startOfWeek,
@@ -52,7 +53,12 @@ export function MonthlyCalendar({
   }, [currentMonth])
 
   const getTasksForDate = (date: Date) => {
-    return tasks.filter((task) => isSameDay(task.date, date))
+    const dayMs = startOfDay(date).getTime()
+    return tasks.filter((task) => {
+      const taskStart = startOfDay(task.startDate).getTime()
+      const taskDue = startOfDay(task.dueDate).getTime()
+      return dayMs >= taskStart && dayMs <= taskDue
+    })
   }
 
   const weekDays = t.weekDays
