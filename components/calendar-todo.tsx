@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { isSameDay } from 'date-fns'
+import { startOfDay } from 'date-fns'
 import { Archive, Plus, Settings2, Trash2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { MonthlyCalendar } from './monthly-calendar'
@@ -57,8 +57,13 @@ export function CalendarTodo() {
   }, [tasks, taskScope])
 
   const selectedDateTasks = useMemo(() => {
+    const dayMs = startOfDay(selectedDate).getTime()
     return scopedTasks
-      .filter((task) => isSameDay(task.date, selectedDate))
+      .filter((task) => {
+        const taskStart = startOfDay(task.startDate).getTime()
+        const taskDue = startOfDay(task.dueDate).getTime()
+        return dayMs >= taskStart && dayMs <= taskDue
+      })
       .sort((a, b) => {
         const startDiff = a.startDate.getTime() - b.startDate.getTime()
         if (startDiff !== 0) return startDiff
