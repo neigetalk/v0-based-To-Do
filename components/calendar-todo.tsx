@@ -140,42 +140,44 @@ export function CalendarTodo() {
             </div>
           </div>
 
-          {/* Archive + Trash scope toggles — icon buttons, left-aligned with content cards */}
-          <div className="mt-3 flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setTaskScope(taskScope === 'archived' ? 'active' : 'archived')}
-              title={t.scopeArchived}
-              aria-label={t.scopeArchived}
-              className={cn(
-                'inline-flex items-center justify-center size-10 rounded-lg transition-colors',
-                taskScope === 'archived'
-                  ? 'text-[#4CD964] bg-[#4CD964]/10'
-                  : 'text-[#8E8E93] hover:text-gray-700 hover:bg-white/60'
-              )}
-            >
-              <Archive className="size-5" />
-            </button>
+          {/* Archive + Trash scope toggles — icon buttons, right-aligned */}
+          <div className="mt-3">
+            <div className="flex items-center justify-end gap-1">
+              <button
+                type="button"
+                onClick={() => setTaskScope(taskScope === 'archived' ? 'active' : 'archived')}
+                title={t.scopeArchived}
+                aria-label={t.scopeArchived}
+                className={cn(
+                  'inline-flex items-center justify-center size-10 rounded-lg transition-colors',
+                  taskScope === 'archived'
+                    ? 'text-[#4CD964] bg-[#4CD964]/10'
+                    : 'text-[#8E8E93] hover:text-gray-700 hover:bg-white/60'
+                )}
+              >
+                <Archive className="size-5" />
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setTaskScope(taskScope === 'trash' ? 'active' : 'trash')}
-              title={t.scopeTrash}
-              aria-label={t.scopeTrash}
-              className={cn(
-                'inline-flex items-center justify-center size-10 rounded-lg transition-colors',
-                taskScope === 'trash'
-                  ? 'text-[#007AFF] bg-[#007AFF]/10'
-                  : 'text-[#8E8E93] hover:text-gray-700 hover:bg-white/60'
-              )}
-            >
-              <Trash2 className="size-5" />
-            </button>
+              <button
+                type="button"
+                onClick={() => setTaskScope(taskScope === 'trash' ? 'active' : 'trash')}
+                title={t.scopeTrash}
+                aria-label={t.scopeTrash}
+                className={cn(
+                  'inline-flex items-center justify-center size-10 rounded-lg transition-colors',
+                  taskScope === 'trash'
+                    ? 'text-[#007AFF] bg-[#007AFF]/10'
+                    : 'text-[#8E8E93] hover:text-gray-700 hover:bg-white/60'
+                )}
+              >
+                <Trash2 className="size-5" />
+              </button>
+            </div>
 
             {taskScope === 'trash' && (
-              <span className="ml-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-gray-400 text-center">
                 {t.trashAutoDeleteNotice}
-              </span>
+              </p>
             )}
           </div>
         </header>
