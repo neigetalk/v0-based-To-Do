@@ -133,6 +133,17 @@ export function MonthlyCalendar({
             const isHoliday = KOREAN_HOLIDAYS.has(format(day, 'yyyy-MM-dd'))
             const dow = day.getDay() // 0 = Sun, 6 = Sat
 
+            // All-day tasks get a colored strip at the top of the cell.
+            const allDayTasks = dayTasks.filter((t) => t.isAllDay && !t.completed)
+            const allDayColor =
+              allDayTasks.some((t) => t.priority === 'high')
+                ? '#FF3B30'
+                : allDayTasks.some((t) => t.priority === 'medium')
+                  ? '#4CD964'
+                  : allDayTasks.length > 0
+                    ? '#8E8E93'
+                    : null
+
             // Determine the single highest-priority dot for this day.
             // Completed tasks don't contribute — only active tasks count.
             const activeTasks = dayTasks.filter((t) => !t.completed)
@@ -171,6 +182,14 @@ export function MonthlyCalendar({
                   isDragging && 'hover:ring-2 hover:ring-[#007AFF] hover:ring-dashed'
                 )}
               >
+                {/* All-day indicator strip */}
+                {allDayColor && (
+                  <span
+                    className="absolute top-0 left-0 right-0 h-1 rounded-t-lg"
+                    style={{ backgroundColor: allDayColor }}
+                  />
+                )}
+
                 <span
                   className={cn(
                     'text-base font-medium w-8 h-8 flex items-center justify-center rounded-full',

@@ -223,6 +223,7 @@ export function useTasks() {
       isRecurring = false,
       repeatType?: RepeatType,
       excludeWeekends = false,
+      isAllDay = false,
     ) => {
       const day = startOfDay(startDate)
       const nextStart = new Date(startDate)
@@ -243,6 +244,7 @@ export function useTasks() {
         completed,
         isArchived: false,
         isDeleted: false,
+        isAllDay,
         ...(isRecurring && repeatType ? {
           isRecurring: true,
           repeatType,

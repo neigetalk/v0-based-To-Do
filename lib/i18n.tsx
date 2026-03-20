@@ -68,8 +68,9 @@ const dict = {
 
     // Add Task dialog
     addTaskTitle: 'Add New Task',
-    fieldTaskTitle: 'Task Title',
+    fieldTaskTitle: 'Title',
     fieldTaskPlaceholder: 'Enter task title…',
+    fieldAllDay: 'All Day',
     fieldStart: 'Start',
     fieldDue: 'Due',
     fieldPriority: 'Priority',
@@ -182,8 +183,9 @@ const dict = {
     boardCompletedCount: (done: number, total: number) => `${done}/${total} 완료`,
 
     addTaskTitle: '새 할일 추가',
-    fieldTaskTitle: '할일 제목',
+    fieldTaskTitle: '제목',
     fieldTaskPlaceholder: '제목을 입력하세요…',
+    fieldAllDay: '하루 종일',
     fieldStart: '시작',
     fieldDue: '마감',
     fieldPriority: '우선순위',

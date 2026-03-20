@@ -45,6 +45,7 @@ interface AddTaskDialogProps {
     isRecurring?: boolean,
     repeatType?: RepeatType,
     excludeWeekends?: boolean,
+    isAllDay?: boolean,
   ) => void
   defaultDate: Date
   categories: string[]
@@ -90,6 +91,7 @@ export function AddTaskDialog({
   const [newCategory, setNewCategory] = useState('')
   const [repeatType, setRepeatType] = useState<'none' | RepeatType>('none')
   const [excludeWeekends, setExcludeWeekends] = useState(false)
+  const [isAllDay, setIsAllDay] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -108,6 +110,7 @@ export function AddTaskDialog({
     setNewCategory('')
     setRepeatType('none')
     setExcludeWeekends(false)
+    setIsAllDay(false)
   }, [open, defaultDate, categories])
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -120,6 +123,7 @@ export function AddTaskDialog({
         isRecurring,
         isRecurring ? (repeatType as RepeatType) : undefined,
         isRecurring && repeatType === 'daily' ? excludeWeekends : false,
+        isAllDay,
       )
       setTitle('')
       onOpenChange(false)
@@ -156,18 +160,19 @@ export function AddTaskDialog({
 
             <div className="space-y-2">
               <Label className="text-gray-700">{t.fieldStart}</Label>
-              <div className="grid grid-cols-[1fr_110px] gap-2">
+              <div className={cn('gap-2', isAllDay ? 'flex' : 'grid grid-cols-[1fr_110px]')}>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       type="button"
                       variant="outline"
                       className={cn(
-                        'justify-start text-left font-normal bg-gray-50 border-gray-200 text-gray-900'
+                        'justify-start text-left font-normal bg-gray-50 border-gray-200 text-gray-900',
+                        isAllDay && 'flex-1'
                       )}
                     >
                       <CalendarIcon className="mr-2 size-4" />
-                      {format(localStart, 'PPP p')}
+                      {format(localStart, isAllDay ? 'PPP' : 'PPP p')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-white" align="start">
@@ -180,30 +185,33 @@ export function AddTaskDialog({
                   </PopoverContent>
                 </Popover>
 
-                <Input
-                  type="time"
-                  value={toTimeValue(localStart)}
-                  onChange={(e) => setLocalStart(setTimePart(localStart, e.target.value))}
-                  className="bg-gray-50 border-gray-200 text-gray-900"
-                  step={60}
-                />
+                {!isAllDay && (
+                  <Input
+                    type="time"
+                    value={toTimeValue(localStart)}
+                    onChange={(e) => setLocalStart(setTimePart(localStart, e.target.value))}
+                    className="bg-gray-50 border-gray-200 text-gray-900"
+                    step={60}
+                  />
+                )}
               </div>
             </div>
 
             <div className="space-y-2">
               <Label className="text-gray-700">{t.fieldDue}</Label>
-              <div className="grid grid-cols-[1fr_110px] gap-2">
+              <div className={cn('gap-2', isAllDay ? 'flex' : 'grid grid-cols-[1fr_110px]')}>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       type="button"
                       variant="outline"
                       className={cn(
-                        'justify-start text-left font-normal bg-gray-50 border-gray-200 text-gray-900'
+                        'justify-start text-left font-normal bg-gray-50 border-gray-200 text-gray-900',
+                        isAllDay && 'flex-1'
                       )}
                     >
                       <CalendarIcon className="mr-2 size-4" />
-                      {format(localDue, 'PPP p')}
+                      {format(localDue, isAllDay ? 'PPP' : 'PPP p')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-white" align="start">
@@ -216,14 +224,26 @@ export function AddTaskDialog({
                   </PopoverContent>
                 </Popover>
 
-                <Input
-                  type="time"
-                  value={toTimeValue(localDue)}
-                  onChange={(e) => setLocalDue(setTimePart(localDue, e.target.value))}
-                  className="bg-gray-50 border-gray-200 text-gray-900"
-                  step={60}
-                />
+                {!isAllDay && (
+                  <Input
+                    type="time"
+                    value={toTimeValue(localDue)}
+                    onChange={(e) => setLocalDue(setTimePart(localDue, e.target.value))}
+                    className="bg-gray-50 border-gray-200 text-gray-900"
+                    step={60}
+                  />
+                )}
               </div>
+
+              {/* All Day toggle — sits directly below the due date row */}
+              <label className="flex items-center gap-2 cursor-pointer select-none pt-1">
+                <Checkbox
+                  checked={isAllDay}
+                  onCheckedChange={(v) => setIsAllDay(Boolean(v))}
+                  className="data-[state=checked]:bg-[#4CD964] data-[state=checked]:border-[#4CD964]"
+                />
+                <span className="text-sm text-gray-700">{t.fieldAllDay}</span>
+              </label>
             </div>
 
             <div className="flex flex-col gap-2">

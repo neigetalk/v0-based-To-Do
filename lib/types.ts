@@ -27,4 +27,6 @@ export interface Task {
   excludeWeekends?: boolean
   /** Links a generated recurrence back to the original task. */
   originalTaskId?: string
+  /** True when the task spans the entire day (no specific start/end time). */
+  isAllDay?: boolean
 }

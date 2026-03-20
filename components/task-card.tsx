@@ -179,11 +179,11 @@ export function TaskCard({
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className="bg-white">
                   <DropdownMenuItem
-                    onSelect={() => onChangePriority(task.id, 'high')}
-                    className={cn('cursor-pointer', task.priority === 'high' && 'font-semibold')}
+                    onSelect={() => onChangePriority(task.id, 'low')}
+                    className={cn('cursor-pointer', task.priority === 'low' && 'font-semibold')}
                   >
-                    <Flag className="size-4 mr-2 text-[#FF3B30]" />
-                    {t.priorityHigh}
+                    <Flag className="size-4 mr-2 text-gray-400" />
+                    {t.priorityLow}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onSelect={() => onChangePriority(task.id, 'medium')}
@@ -193,11 +193,11 @@ export function TaskCard({
                     {t.priorityMedium}
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onSelect={() => onChangePriority(task.id, 'low')}
-                    className={cn('cursor-pointer', task.priority === 'low' && 'font-semibold')}
+                    onSelect={() => onChangePriority(task.id, 'high')}
+                    className={cn('cursor-pointer', task.priority === 'high' && 'font-semibold')}
                   >
-                    <Flag className="size-4 mr-2 text-gray-400" />
-                    {t.priorityLow}
+                    <Flag className="size-4 mr-2 text-[#FF3B30]" />
+                    {t.priorityHigh}
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>

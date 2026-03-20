@@ -82,6 +82,7 @@ export function TaskDetailDialog({
   const [newCategory, setNewCategory] = useState('')
   const [localRepeatType, setLocalRepeatType] = useState<'none' | RepeatType>('none')
   const [localExcludeWeekends, setLocalExcludeWeekends] = useState(false)
+  const [localIsAllDay, setLocalIsAllDay] = useState(false)
 
   useEffect(() => {
     if (!task) return
@@ -95,6 +96,7 @@ export function TaskDetailDialog({
     setLocalPriority(task.priority)
     setLocalRepeatType(task.repeatType ?? 'none')
     setLocalExcludeWeekends(task.excludeWeekends ?? false)
+    setLocalIsAllDay(task.isAllDay ?? false)
   }, [task])
 
   const statusTone = useMemo(() => {
@@ -131,6 +133,7 @@ export function TaskDetailDialog({
       isRecurring,
       repeatType: isRecurring ? (localRepeatType as RepeatType) : undefined,
       excludeWeekends: isRecurring && localRepeatType === 'daily' ? localExcludeWeekends : undefined,
+      isAllDay: localIsAllDay,
     })
     onOpenChange(false)
   }
@@ -186,7 +189,7 @@ export function TaskDetailDialog({
               <div className="space-y-2">
                 <Label className="text-gray-700">{t.fieldPriority}</Label>
                 <div className="flex gap-2">
-                  {(['high', 'medium', 'low'] as Priority[]).map((p) => (
+                  {(['low', 'medium', 'high'] as Priority[]).map((p) => (
                     <button
                       key={p}
                       type="button"
@@ -334,16 +337,19 @@ export function TaskDetailDialog({
               <div className="mt-4 space-y-4">
                 <div className="space-y-2">
                   <Label className="text-gray-700">{t.fieldStart}</Label>
-                  <div className="grid grid-cols-[1fr_110px] gap-2">
+                  <div className={cn('gap-2', localIsAllDay ? 'flex' : 'grid grid-cols-[1fr_110px]')}>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           type="button"
                           variant="outline"
-                          className="justify-start text-left font-normal bg-gray-50 border-gray-200 text-gray-900"
+                          className={cn(
+                            'justify-start text-left font-normal bg-gray-50 border-gray-200 text-gray-900',
+                            localIsAllDay && 'flex-1'
+                          )}
                         >
                           <CalendarIcon className="mr-2 size-4" />
-                          {format(localStart, 'PPP p')}
+                          {format(localStart, localIsAllDay ? 'PPP' : 'PPP p')}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0 bg-white" align="start">
@@ -356,28 +362,33 @@ export function TaskDetailDialog({
                       </PopoverContent>
                     </Popover>
 
-                    <Input
-                      type="time"
-                      value={toTimeValue(localStart)}
-                      onChange={(e) => setLocalStart(setTimePart(localStart, e.target.value))}
-                      className="bg-gray-50 border-gray-200 text-gray-900"
-                      step={60}
-                    />
+                    {!localIsAllDay && (
+                      <Input
+                        type="time"
+                        value={toTimeValue(localStart)}
+                        onChange={(e) => setLocalStart(setTimePart(localStart, e.target.value))}
+                        className="bg-gray-50 border-gray-200 text-gray-900"
+                        step={60}
+                      />
+                    )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label className="text-gray-700">{t.fieldDue}</Label>
-                  <div className="grid grid-cols-[1fr_110px] gap-2">
+                  <div className={cn('gap-2', localIsAllDay ? 'flex' : 'grid grid-cols-[1fr_110px]')}>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           type="button"
                           variant="outline"
-                          className="justify-start text-left font-normal bg-gray-50 border-gray-200 text-gray-900"
+                          className={cn(
+                            'justify-start text-left font-normal bg-gray-50 border-gray-200 text-gray-900',
+                            localIsAllDay && 'flex-1'
+                          )}
                         >
                           <CalendarIcon className="mr-2 size-4" />
-                          {format(localDue, 'PPP p')}
+                          {format(localDue, localIsAllDay ? 'PPP' : 'PPP p')}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0 bg-white" align="start">
@@ -390,14 +401,26 @@ export function TaskDetailDialog({
                       </PopoverContent>
                     </Popover>
 
-                    <Input
-                      type="time"
-                      value={toTimeValue(localDue)}
-                      onChange={(e) => setLocalDue(setTimePart(localDue, e.target.value))}
-                      className="bg-gray-50 border-gray-200 text-gray-900"
-                      step={60}
-                    />
+                    {!localIsAllDay && (
+                      <Input
+                        type="time"
+                        value={toTimeValue(localDue)}
+                        onChange={(e) => setLocalDue(setTimePart(localDue, e.target.value))}
+                        className="bg-gray-50 border-gray-200 text-gray-900"
+                        step={60}
+                      />
+                    )}
                   </div>
+
+                  {/* All Day toggle */}
+                  <label className="flex items-center gap-2 cursor-pointer select-none pt-1">
+                    <Checkbox
+                      checked={localIsAllDay}
+                      onCheckedChange={(v) => setLocalIsAllDay(Boolean(v))}
+                      className="data-[state=checked]:bg-[#4CD964] data-[state=checked]:border-[#4CD964]"
+                    />
+                    <span className="text-xs text-gray-700">{t.fieldAllDay}</span>
+                  </label>
                 </div>
               </div>
             </div>
