@@ -120,6 +120,25 @@ export function MonthlyCalendar({
             const isCurrentMonth = isSameMonth(day, currentMonth)
             const isTodayDate = isToday(day)
 
+            // Determine the single highest-priority dot for this day.
+            // Completed tasks don't contribute — only active tasks count.
+            const activeTasks = dayTasks.filter((t) => !t.completed)
+            const maxPriority =
+              activeTasks.some((t) => t.priority === 'high')
+                ? 'high'
+                : activeTasks.some((t) => t.priority === 'medium')
+                  ? 'medium'
+                  : activeTasks.length > 0
+                    ? 'low'
+                    : null
+
+            const dotColor =
+              maxPriority === 'high'
+                ? '#FF3B30'
+                : maxPriority === 'medium'
+                  ? '#4CD964'
+                  : '#8E8E93'
+
             return (
               <motion.button
                 key={day.toISOString()}
@@ -148,26 +167,17 @@ export function MonthlyCalendar({
                   {format(day, 'd')}
                 </span>
 
-                {dayTasks.length > 0 && (
-                  <div className="flex flex-wrap justify-center gap-0.5 mt-1">
-                    {dayTasks.slice(0, 3).map((task) => (
-                      <motion.div
-                        key={task.id}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className={cn(
-                          'size-1.5 rounded-full',
-                          task.completed ? 'bg-gray-300' : 'bg-gray-500'
-                        )}
-                      />
-                    ))}
-                    {dayTasks.length > 3 && (
-                      <span className="text-[10px] text-gray-400">
-                        +{dayTasks.length - 3}
-                      </span>
-                    )}
-                  </div>
-                )}
+                {/* Single priority dot — one per date, highest priority wins */}
+                <div className="h-1.5 flex items-center justify-center mt-0.5">
+                  {maxPriority && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="block size-1.5 rounded-full"
+                      style={{ backgroundColor: dotColor }}
+                    />
+                  )}
+                </div>
               </motion.button>
             )
         })}
